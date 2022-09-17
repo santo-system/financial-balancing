@@ -7,12 +7,8 @@ plugins {
 }
 
 application {
-    mainClass.value("com.kestraa.finance.ApplicationKt")
+    mainClass.value("com.santosystem.financial.balancing.ApplicationKt")
 }
-//
-//application {
-//    mainClass.set("MainKt")
-//}
 
 extra["springCloudVersion"] = "2021.0.4"
 
@@ -24,7 +20,7 @@ dependencyManagement {
 
 dependencies {
     implementation(project(":domain"))
-    implementation(project(":infra"))
+//    implementation(project(":infra"))
 
     // Spring
     implementation("org.springframework.boot:spring-boot-starter-actuator")
