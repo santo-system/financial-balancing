@@ -1,0 +1,63 @@
+version: '3.8'
+
+services:
+  application:
+    container_name: financial-balancing
+    build:
+      context: .
+      dockerfile: Dockerfile-local
+    env_file:
+      - .env
+    environment:
+      DATABASE_HOST: financial-balancing_postgres
+    ports:
+      - "8080:8080"
+    networks:
+      - financial-balancing-networks
+    depends_on:
+      - postgres
+      - pgadmin
+
+  postgres:
+    container_name: financial-balancing_postgres
+    image: postgres
+    environment:
+      POSTGRES_DB: ${DATABASE_NAME:-santosystem}
+      POSTGRES_USER: ${DATABASE_USER:-financial}
+      POSTGRES_PASSWORD: ${DATABASE_PASS:-financial}
+      PGDATA: ./infra/src/test/resources/db/init/create_tables.sql:/docker-entrypoint-initdb.d/create_tables.sql
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+      - ./infra/src/test/resources/db/init/create_tables.sql:/docker-entrypoint-initdb.d/create_tables.sql
+    ports:
+      - "5432:5432"
+    networks:
+      - financial-balancing-networks
+    restart: unless-stopped
+
+  pgadmin:
+    container_name: financial-balancing_pgadmin
+    image: dpage/pgadmin4
+    environment:
+      PGADMIN_DEFAULT_EMAIL: ${PGADMIN_DEFAULT_EMAIL:-pgadmin4@pgadmin.org}
+      PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_DEFAULT_PASSWORD:-admin}
+      PGADMIN_LISTEN_PORT: ${PGADMIN_LISTEN_PORT:-80}
+      PGADMIN_CONFIG_SERVER_MODE: 'False'
+      PGADMIN_CONFIG_MASTER_PASSWORD_REQUIRED: "False"
+    volumes:
+      - pgadmin-data:/var/lib/pgadmin
+    ports:
+      - "${PGADMIN_PORT:-5050}:80"
+    networks:
+      - financial-balancing-networks
+    restart: unless-stopped
+    depends_on:
+      - postgres
+
+networks:
+  financial-balancing-networks:
+    driver: bridge
+
+volumes:
+  postgres-data:
+  pgadmin-data:

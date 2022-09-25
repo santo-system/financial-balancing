@@ -1,0 +1,14 @@
+# pull image
+FROM openjdk:11
+
+RUN mkdir /app
+
+ARG JAR_FILE=application/build/libs/application-*.jar
+
+COPY ${JAR_FILE} /app/financial-balancing.jar
+
+# set work directory
+WORKDIR /app
+
+EXPOSE 8080
+ENTRYPOINT java -Duser.timezone=America/Sao_Paulo -noverify -Xmx256M -Xss512k -jar financial-balancing.jar

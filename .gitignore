@@ -88,3 +88,6 @@ out/
 
 ### VS Code ###
 .vscode/
+
+### ENV File ###
+/.env
