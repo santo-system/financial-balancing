@@ -1,13 +1,19 @@
 plugins {
     id("application")
-    id("org.springframework.boot") version "2.7.3"
-    id("io.spring.dependency-management") version "1.0.13.RELEASE"
+    id("org.springframework.boot") version "2.7.4"
+    id("io.spring.dependency-management") version "1.0.14.RELEASE"
 
     kotlin("plugin.spring") version "1.6.21"
 }
 
 application {
     mainClass.value("com.santosystem.financial.balancing.ApplicationKt")
+}
+
+tasks {
+    jar {
+        enabled = false
+    }
 }
 
 extra["springCloudVersion"] = "2021.0.4"
@@ -20,7 +26,7 @@ dependencyManagement {
 
 dependencies {
     implementation(project(":domain"))
-//    implementation(project(":infra"))
+    implementation(project(":infra"))
 
     // Spring
     implementation("org.springframework.boot:spring-boot-starter-actuator")

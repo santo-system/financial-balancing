@@ -16,7 +16,7 @@ class WalletsInfoDTO(
                     id = it.id,
                     name = it.name,
                     description = it.description,
-                    goals = it.goals.toGoalDTO()
+                    goals = it.goals?.toGoalDTO() ?: emptyList()
                 )
             }
         )
