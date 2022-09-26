@@ -3,11 +3,11 @@ package com.santosystem.financial.balancing.models
 import java.time.ZonedDateTime
 
 class Wallet(
-    val id: Long,
+    val id: Long? = null,
     val name: String,
     val description: String,
     val main: Boolean,
     val goals: List<Goal>? = emptyList(),
-    val createdAt: ZonedDateTime,
-    val updatedAt: ZonedDateTime
+    val createdAt: ZonedDateTime? = null,
+    val updatedAt: ZonedDateTime? = null
 )

@@ -44,6 +44,9 @@ dependencies {
     implementation("org.springdoc:springdoc-openapi-kotlin:1.6.11")
     implementation("org.springdoc:springdoc-openapi-core:1.1.49")
 
+    // Logger
+    implementation("org.zalando:logbook-spring-boot-starter:2.14.0")
+
     // Testing
     testImplementation("org.springframework.boot:spring-boot-starter-test")
 

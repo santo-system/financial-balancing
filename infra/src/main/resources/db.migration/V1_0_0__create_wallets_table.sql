@@ -3,7 +3,7 @@ CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 CREATE TABLE IF NOT EXISTS financial_balancing.wallets (
     id BIGSERIAL PRIMARY KEY,
     name VARCHAR(100) NOT NULL,
-    description VARCHAR(255),
+,    description VARCHAR(255) NOT NULL,
     main BOOLEAN DEFAULT FALSE NOT NULL,
     created_at TIMESTAMPTZ NOT NULL,
     updated_at TIMESTAMPTZ NOT NULL

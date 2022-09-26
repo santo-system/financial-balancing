@@ -22,7 +22,7 @@ import javax.persistence.Table
 data class WalletEntity(
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    val id: Long,
+    val id: Long?,
 
     @Column(length = 100)
     val name: String,
@@ -36,9 +36,9 @@ data class WalletEntity(
     @OneToMany(fetch = FetchType.EAGER)
     val goalEntities: List<GoalEntity>? = emptyList(),
 
-    var createdAt: ZonedDateTime,
+    var createdAt: ZonedDateTime? = null,
 
-    var updatedAt: ZonedDateTime
+    var updatedAt: ZonedDateTime? = null
 
 ) {
 
