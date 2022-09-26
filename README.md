@@ -32,5 +32,5 @@ docker-compose up --build -d
 make down
 
 ## or if you don't use make, use the following command
-docker-compose down
+docker-compose down --volumes
 ```

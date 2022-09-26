@@ -1,4 +1,4 @@
-package com.santosystem.financial.exceptions
+package com.santosystem.financial.balancing.exceptions
 
 class Error {
     fun required(msg: String) {

@@ -8,6 +8,6 @@ interface WalletRepositoryPort {
 
     fun findById(): List<Wallet>
 
-    fun save(wallet: Wallet)
+    fun save(wallet: Wallet): Wallet
 
 }

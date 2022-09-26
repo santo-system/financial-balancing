@@ -1,15 +1,17 @@
-package com.santosystem.financial.balancing.dtos
+package com.santosystem.financial.balancing.dtos.response
 
+import com.santosystem.financial.balancing.dtos.GoalDTO
+import com.santosystem.financial.balancing.dtos.WalletDTO
 import com.santosystem.financial.balancing.models.Goal
 import com.santosystem.financial.balancing.models.Wallet
 
-class WalletsInfoDTO(
+class WalletsInfoResponse(
     val mainWalletId: Long,
     val wallets: List<WalletDTO>
 ) {
 
-    fun List<Wallet>.toWalletsInfoDTO(): WalletsInfoDTO {
-        return WalletsInfoDTO(
+    fun List<Wallet>.toWalletsInfoDTO(): WalletsInfoResponse {
+        return WalletsInfoResponse(
             mainWalletId = first { it.main }.id,
             map {
                 WalletDTO(

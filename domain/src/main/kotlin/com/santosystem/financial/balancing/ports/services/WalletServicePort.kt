@@ -1,7 +1,7 @@
 package com.santosystem.financial.balancing.ports.services
 
 import com.santosystem.financial.balancing.models.Wallet
-import com.santosystem.financial.exceptions.BusinessNotFoundException
+import com.santosystem.financial.balancing.exceptions.BusinessNotFoundException
 
 interface WalletServicePort {
 

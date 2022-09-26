@@ -1,8 +1,8 @@
-package com.santosystem.financial.adapters.services
+package com.santosystem.financial.balancing.adapters.services
 
 import com.santosystem.financial.balancing.models.Wallet
 import com.santosystem.financial.balancing.ports.services.WalletServicePort
-import com.santosystem.financial.exceptions.BusinessNotFoundException
+import com.santosystem.financial.balancing.exceptions.BusinessNotFoundException
 
 class WalletServiceImpl : WalletServicePort {
     override fun findAll(): List<Wallet> {

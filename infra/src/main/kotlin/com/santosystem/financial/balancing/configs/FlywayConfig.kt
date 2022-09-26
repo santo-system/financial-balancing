@@ -18,6 +18,7 @@ class FlywayConfig {
     fun startMigrate() {
         Flyway.configure()
             .baselineOnMigrate(true)
+            .validateOnMigrate(true)
             .dataSource(getDataSource())
             .table(FLYWAY_TABLE)
             .locations(LOCATION)

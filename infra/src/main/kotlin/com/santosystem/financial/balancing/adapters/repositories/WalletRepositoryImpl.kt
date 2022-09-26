@@ -12,7 +12,7 @@ class WalletRepositoryImpl: WalletRepositoryPort {
         TODO("Not yet implemented")
     }
 
-    override fun save(wallet: Wallet) {
+    override fun save(wallet: Wallet): Wallet {
         TODO("Not yet implemented")
     }
 }

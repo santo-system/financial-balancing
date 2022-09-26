@@ -14,12 +14,12 @@ spring:
   datasource:
     username: ${DATABASE_USER:financial}
     password: ${DATABASE_PASS:financial}
-    jdbcUrl: jdbc:postgresql://${DATABASE_HOST:localhost}:${DATABASE_PORT:5432}/${DATABASE_NAME:santosystem}?currentSchema=${DATABASE_SCHEMA:financial-balancing}
+    jdbcUrl: jdbc:postgresql://${DATABASE_HOST:localhost}:${DATABASE_PORT:5432}/${DATABASE_NAME:santosystem}?currentSchema=${DATABASE_SCHEMA:financial_balancing}
     driver-class-name: org.postgresql.Driver
   flyway:
     color: always
 
 server:
-  port: ${HTTP_PORT:8080}
+  port: ${HTTP_PORT:8081}
   servlet:
     context-path: /${APP_NAME:financial-balancing}

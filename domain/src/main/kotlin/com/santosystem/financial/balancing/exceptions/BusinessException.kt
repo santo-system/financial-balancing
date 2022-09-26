@@ -1,3 +1,3 @@
-package com.santosystem.financial.exceptions
+package com.santosystem.financial.balancing.exceptions
 
 class BusinessException(message: String?) : RuntimeException(message)
