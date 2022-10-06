@@ -2,22 +2,23 @@ spring:
   output:
     ansi:
       enabled: ALWAYS
-  jpa:
-    open-in-view: false
-    database-platform: org.hibernate.dialect.PostgreSQL9Dialect
-    show-sql: false
-    properties:
-      hibernate:
-        format_sql: true
-        dialect: org.hibernate.dialect.PostgreSQL9Dialect
-        default_schema: ${DATABASE_SCHEMA:financial-balancing}
   datasource:
     username: ${DATABASE_USER:financial}
     password: ${DATABASE_PASS:financial}
     jdbcUrl: jdbc:postgresql://${DATABASE_HOST:localhost}:${DATABASE_PORT:5432}/${DATABASE_NAME:santosystem}?currentSchema=${DATABASE_SCHEMA:financial_balancing}
-    driver-class-name: org.postgresql.Driver
+    driverClassName: org.postgresql.Driver
+    platform: posgresql
   flyway:
     color: always
+    enabled: false
+  jpa:
+    open-in-view: false
+    database-platform: org.hibernate.dialect.PostgreSQL9Dialect
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+        dialect: org.hibernate.dialect.PostgreSQL9Dialect
 
 server:
   port: ${HTTP_PORT:8081}

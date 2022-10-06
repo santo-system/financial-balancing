@@ -33,7 +33,7 @@ run: build
 
 build: clean
 	@echo "#make build started"
-	@.\gradlew build test
+	@.\gradlew build
 
 verify: clean
 	@echo "#make verify started"
@@ -45,12 +45,12 @@ clean:
 	@echo "#make clean started"
 	@.\gradlew clean
 
-start-dependencies: build
+start: build
 	@echo "#make start-dependencies started"
-	@docker-compose up postgres
-	@docker-compose up pgadmin
+	@docker-compose up postgres -d
+	@docker-compose up pgadmin -d
 
-stop-dependencies:
+stop:
 	@echo "#make stop-dependencies started"
 	@docker-compose down postgres
 	@docker-compose down pgadmin
