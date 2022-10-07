@@ -10,11 +10,11 @@ application {
     mainClass.value("com.santosystem.financial.balancing.ApplicationKt")
 }
 
-tasks {
-    jar {
-        enabled = false
-    }
-}
+//tasks {
+//    jar {
+//        enabled = false
+//    }
+//}
 
 extra["springCloudVersion"] = "2021.0.4"
 
@@ -48,7 +48,7 @@ dependencies {
     implementation("org.zalando:logbook-spring-boot-starter:2.14.0")
 
     // Testing
-    testImplementation("org.springframework.boot:spring-boot-starter-test")
+//    testImplementation("org.springframework.boot:spring-boot-starter-test")
 
 //    testImplementation("io.mockk:mockk:1.12.3")
 //    testImplementation("com.willowtreeapps.assertk:assertk-jvm:0.25")

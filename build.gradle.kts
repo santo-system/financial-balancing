@@ -3,44 +3,51 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 val logbackVersion: String by project
 
 plugins {
-    kotlin("jvm") version "1.7.10"
+    kotlin("jvm") version "1.7.10" apply false
+    java
 }
 
 allprojects {
     group = "com.santosystem"
     version = "1.0-SNAPSHOT"
+}
+
+subprojects {
+    apply(plugin = "kotlin")
+
+    java.sourceCompatibility = JavaVersion.VERSION_11
+    java.targetCompatibility = JavaVersion.VERSION_11
 
     repositories {
         mavenCentral()
     }
 
-    apply(plugin = "kotlin")
+    dependencies {
+        // Kotlin
+        implementation(kotlin("stdlib-jdk8"))
+        implementation(kotlin("reflect"))
 
-    java.sourceCompatibility = JavaVersion.VERSION_11
-    java.targetCompatibility = JavaVersion.VERSION_11
+        // Logger
+        implementation("ch.qos.logback:logback-classic:$logbackVersion")
+
+        // Gradle env
+        implementation("io.github.cdimascio:dotenv-kotlin:6.3.1")
+
+        // Testing
+        testImplementation("io.mockk:mockk:1.13.2")
+        testImplementation("com.willowtreeapps.assertk:assertk-jvm:0.25")
+        testImplementation("org.junit.jupiter:junit-jupiter-api:5.8.2")
+        testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.8.2")
+    }
+
+    tasks.test {
+        useJUnitPlatform()
+    }
 
     tasks.withType<KotlinCompile> {
         kotlinOptions {
             freeCompilerArgs = listOf("-Xjsr305=strict")
             jvmTarget = JavaVersion.VERSION_11.toString()
         }
-    }
-}
-
-subprojects {
-    dependencies {
-        implementation(kotlin("stdlib-jdk8"))
-        implementation(kotlin("reflect"))
-
-        implementation("ch.qos.logback:logback-classic:$logbackVersion")
-
-        // Gradle env
-        implementation("io.github.cdimascio:dotenv-kotlin:6.3.1")
-
-        testImplementation(kotlin("test"))
-    }
-
-    tasks.test {
-        useJUnitPlatform()
     }
 }
