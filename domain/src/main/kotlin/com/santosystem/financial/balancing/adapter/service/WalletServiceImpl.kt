@@ -21,13 +21,8 @@ class WalletServiceImpl(private val repository: WalletRepository) : WalletServic
     override fun findById(walletId: Long?): Wallet {
         verifyWalletIdIsNull(walletId)
 
-        val walletFound = repository.findById(walletId ?: 0)
-
-        return when (walletFound) {
-            null -> {
-                logger.error("Wallet not found with walletId: {} ", walletId)
-                throw BusinessNotFoundException("Wallet not found.")
-            }
+        return when (val walletFound = repository.findById(walletId ?: 0)) {
+            null -> throw businessNotFoundException(walletId)
 
             else -> walletFound
         }
@@ -41,13 +36,8 @@ class WalletServiceImpl(private val repository: WalletRepository) : WalletServic
     override fun update(wallet: Wallet): Wallet {
         verifyWalletIdIsNull(wallet.id)
 
-        val walletFound = repository.findById(wallet.id ?: 0)
-
-        return when (walletFound) {
-            null -> {
-                logger.error("Wallet not found with walletId: {} ", wallet.id)
-                throw BusinessNotFoundException("Wallet not found.")
-            }
+        return when (repository.findById(wallet.id ?: 0)) {
+            null -> throw businessNotFoundException(wallet.id)
 
             else -> repository.save(wallet)
         }
@@ -64,6 +54,11 @@ class WalletServiceImpl(private val repository: WalletRepository) : WalletServic
             logger.error("Wallet ID required.")
             BusinessError.required("Wallet ID")
         }
+    }
+
+    private fun businessNotFoundException(walletId: Long?): BusinessNotFoundException {
+        logger.error("Wallet not found with walletId: {} ", walletId)
+        throw BusinessNotFoundException("Wallet not found.")
     }
 
 }

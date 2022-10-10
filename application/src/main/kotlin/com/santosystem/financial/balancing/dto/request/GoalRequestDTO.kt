@@ -2,22 +2,23 @@ package com.santosystem.financial.balancing.dto.request
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import com.fasterxml.jackson.annotation.JsonInclude
-import com.santosystem.financial.balancing.model.Wallet
+import com.santosystem.financial.balancing.model.Goal
+import java.math.BigDecimal
 import javax.validation.constraints.NotBlank
+import javax.validation.constraints.Positive
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(JsonInclude.Include.NON_NULL)
-data class WalletRequestDTO(
+data class GoalRequestDTO(
     @NotBlank
     private val name: String,
-    private val description: String?,
-    private val main: Boolean = false,
+    @Positive
+    private val goalPercent: BigDecimal,
 ) {
-    fun toDomain(): Wallet {
-        return Wallet(
+    fun toDomain(): Goal {
+        return Goal(
             name = name,
-            description = description.orEmpty(),
-            main = main
+            goalPercent = goalPercent
         )
     }
 }

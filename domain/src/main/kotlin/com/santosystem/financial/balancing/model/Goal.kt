@@ -3,11 +3,12 @@ package com.santosystem.financial.balancing.model
 import java.math.BigDecimal
 import java.time.ZonedDateTime
 
-class Goal(
-    val id: Long,
+data class Goal(
+    val id: Long? = null,
     val name: String,
     val goalPercent: BigDecimal,
-    val currentPercent: BigDecimal,
-    val createdAt: ZonedDateTime,
-    val updatedAt: ZonedDateTime
+    val currentPercent: BigDecimal? = BigDecimal.ZERO,
+    val assets: List<Asset>? = emptyList(),
+    val createdAt: ZonedDateTime? = null,
+    val updatedAt: ZonedDateTime? = null
 )

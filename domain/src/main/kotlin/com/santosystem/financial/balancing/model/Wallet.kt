@@ -2,7 +2,7 @@ package com.santosystem.financial.balancing.model
 
 import java.time.ZonedDateTime
 
-class Wallet(
+data class Wallet(
     val id: Long? = null,
     val name: String,
     val description: String,

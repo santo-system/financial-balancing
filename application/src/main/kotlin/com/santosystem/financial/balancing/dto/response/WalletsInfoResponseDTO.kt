@@ -2,8 +2,9 @@ package com.santosystem.financial.balancing.dto.response
 
 import com.santosystem.financial.balancing.model.Goal
 import com.santosystem.financial.balancing.model.Wallet
+import java.math.BigDecimal
 
-class WalletsInfoResponseDTO(
+data class WalletsInfoResponseDTO(
     val mainWalletId: Long,
     val wallets: List<WalletResponseDTO>
 ) {
@@ -28,7 +29,7 @@ class WalletsInfoResponseDTO(
                 id = it.id,
                 name = it.name,
                 goalPercent = it.goalPercent,
-                currentPercent = it.currentPercent
+                currentPercent = it.currentPercent ?: BigDecimal.ZERO
             )
         }
     }

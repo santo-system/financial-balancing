@@ -2,7 +2,7 @@ package com.santosystem.financial.balancing.dto.response
 
 import com.santosystem.financial.balancing.model.Wallet
 
-class WalletResponseDTO(
+data class WalletResponseDTO(
     val id: Long?,
     val name: String,
     val description: String,

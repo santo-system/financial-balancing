@@ -13,8 +13,8 @@ CREATE TABLE IF NOT EXISTS goals (
     id BIGSERIAL PRIMARY KEY,
     wallet_id BIGINT NOT NULL,
     name VARCHAR(100) NOT NULL,
-    goalPercent NUMERIC(5,2) NOT NULL,
-    currentPercent NUMERIC(5,2) NOT NULL,
+    goal_percent NUMERIC(5,2) NOT NULL,
+    current_percent NUMERIC(5,2) NOT NULL,
     created_at TIMESTAMPTZ NOT NULL,
     updated_at TIMESTAMPTZ NOT NULL,
     CONSTRAINT fk_goals_wallets FOREIGN KEY(wallet_id)

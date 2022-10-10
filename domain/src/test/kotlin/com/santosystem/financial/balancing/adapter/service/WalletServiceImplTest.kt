@@ -90,7 +90,6 @@ internal class WalletServiceImplTest {
 
         // then
         verify(exactly = 0) { repository.findById(any()) }
-        verify(exactly = 1) { walletService.findById(null) }
         assertEquals("Wallet ID required.", exception.message)
     }
 
