@@ -2,7 +2,6 @@ package com.santosystem.financial.balancing.entity
 
 import com.santosystem.financial.balancing.entity.AssetEntity.Companion.toEntity
 import com.santosystem.financial.balancing.entity.AssetEntity.Companion.toModelList
-import com.santosystem.financial.balancing.entity.GoalEntity.Companion.toEntity
 import com.santosystem.financial.balancing.model.Goal
 import java.math.BigDecimal
 import java.time.ZonedDateTime
