@@ -34,3 +34,23 @@ make down
 ## or if you don't use make, use the following command
 docker-compose down --volumes
 ```
+
+## Project structure
+```
+.
+├── application            # Application module for Rest API (Adapters)
+│   └── src                # Source files from Application module
+│       ├── main   
+│       │   └── resources  # Application configurations
+│       └── test           # Unit Tests from Application module
+├── domain                 # Domain module for Business rules (Ports)
+│   └── src                # Source files from Domain module
+│       ├── main           
+│       └── test           # Unit Tests from Domain module
+└── infra                  # Infrastructure module for connectors (Adapters)
+    └── src                # Source files from Infrastructure module
+        ├── main           
+        │   └── resources  
+        │       └── db     # Migrations files for Flyway
+        └── test           # Unit Tests from Infrastructure module
+```
