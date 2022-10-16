@@ -11,33 +11,28 @@ import java.util.Objects
 
 class AssetServiceImpl(private val repository: AssetRepository) : AssetService {
 
-    private val logger = LoggerFactory.getLogger(AssetServiceImpl::class.java)
+    private val logger = LoggerFactory.getLogger(this::class.java)
 
     override fun findAll(): List<Asset> {
         return repository.findAll()
     }
 
-//    override fun findAllByGoal(goalId: Long): List<Asset> {
-//        verifyIdIsNull(goalId)
-//        return repository.findAllByGoal(goalId)
-//    }
+    override fun findAllByGoal(goalId: Long): List<Asset> {
+        return repository.findAllByGoal(goalId)
+    }
 
-    @Throws(BusinessNotFoundException::class, BusinessException::class)
-    override fun findById(assetId: Long?): Asset {
-        verifyIdIsNull(assetId)
-
-        return when (val assetFound = repository.findById(assetId ?: 0)) {
-            null -> throw businessNotFoundException(assetId)
-
+    @Throws(BusinessNotFoundException::class)
+    override fun findById(assetId: Long): Asset {
+        return when (val assetFound = repository.findById(assetId)) {
+            null -> throw businessNotFoundException(assetId = assetId)
             else -> assetFound
         }
     }
 
     @Throws(BusinessNotFoundException::class)
-    override fun findByTicker(ticker: String): Asset {
-        return when (val assetFound = repository.findByTicker(ticker)) {
-            null -> throw businessNotFoundException(assetId = null, ticker)
-
+    override fun findByTicker(ticker: String, goalId: Long): Asset {
+        return when (val assetFound = repository.findByTicker(ticker, goalId)) {
+            null -> throw businessNotFoundException(ticker = ticker)
             else -> assetFound
         }
     }
@@ -46,40 +41,41 @@ class AssetServiceImpl(private val repository: AssetRepository) : AssetService {
         return repository.save(asset)
     }
 
-    @Throws(BusinessNotFoundException::class, BusinessException::class)
     override fun update(asset: Asset): Asset {
-        verifyIdIsNull(asset.id)
-
-        return when (repository.findById(asset.id ?: 0)) {
-            null -> throw businessNotFoundException(asset.id)
-
-            else -> repository.save(asset)
-        }
+        return repository.save(asset)
     }
 
-    override fun delete(assetId: Long?) {
-        verifyIdIsNull(assetId)
-        repository.delete(assetId ?: 0)
+    override fun delete(assetId: Long) {
+        repository.delete(assetId)
+    }
+
+    @Throws(BusinessException::class)
+    override fun existsById(goalId: Long?): Boolean {
+        verifyIdIsNull(goalId)
+        return repository.existsById(goalId ?: 0)
     }
 
     @Throws(BusinessException::class)
     private fun verifyIdIsNull(id: Long?) {
         if (Objects.isNull(id) || id == 0L) {
-            logger.error("Asset ID required.")
+            val methodName = object {}.javaClass.enclosingMethod.name
+            logger.error("[$methodName] - Asset ID required")
             BusinessError.required("Asset ID")
         }
     }
 
-    private fun businessNotFoundException(assetId: Long?, ticker: String? = null): BusinessNotFoundException {
+    @Throws(BusinessNotFoundException::class)
+    private fun businessNotFoundException(assetId: Long? = null, ticker: String? = null): BusinessNotFoundException {
+        val methodName = object {}.javaClass.enclosingMethod.name
         when (ticker) {
             null -> {
-                logger.error("Asset not found with assetId: {} ", assetId)
-                throw BusinessNotFoundException("Asset not found.")
+                logger.error("[$methodName] - Asset not found with assetId: {} ", assetId)
+                throw BusinessNotFoundException("Asset not found")
             }
 
             else -> {
-                logger.error("Asset not found with ticker: {} ", ticker)
-                throw BusinessNotFoundException("Asset not found.")
+                logger.error("[$methodName] - Asset not found with ticker: {} ", ticker)
+                throw BusinessNotFoundException("Asset not found")
             }
         }
     }

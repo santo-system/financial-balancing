@@ -11,7 +11,7 @@ import java.util.Objects
 
 class WalletServiceImpl(private val repository: WalletRepository) : WalletService {
 
-    private val logger = LoggerFactory.getLogger(WalletServiceImpl::class.java)
+    private val logger = LoggerFactory.getLogger(this::class.java)
 
     override fun findAll(): List<Wallet> {
         return repository.findAll()
@@ -47,7 +47,7 @@ class WalletServiceImpl(private val repository: WalletRepository) : WalletServic
     private fun verifyIdIsNull(walletId: Long?) {
         if (Objects.isNull(walletId) || walletId == 0L) {
             val methodName = object{}.javaClass.enclosingMethod.name
-            logger.error("[$methodName] - Wallet ID required.")
+            logger.error("[$methodName] - Wallet ID required")
             BusinessError.required("Wallet ID")
         }
     }

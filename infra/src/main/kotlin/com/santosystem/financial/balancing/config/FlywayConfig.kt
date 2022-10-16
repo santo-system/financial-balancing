@@ -18,7 +18,7 @@ private const val LOCATION_DATA = "db/migration/data"
 @Configuration
 class FlywayConfig {
 
-    private val logger = LoggerFactory.getLogger(FlywayConfig::class.java)
+    private val logger = LoggerFactory.getLogger(this::class.java)
 
     @Primary
     @Bean

@@ -11,6 +11,7 @@ CREATE TABLE IF NOT EXISTS assets (
     quantity INTEGER NOT NULL,
     created_at TIMESTAMPTZ NOT NULL,
     updated_at TIMESTAMPTZ NOT NULL,
+    UNIQUE (ticker, goal_id),
     CONSTRAINT fk_assets_goals FOREIGN KEY(goal_id)
         REFERENCES goals(id)
             ON DELETE CASCADE

@@ -8,19 +8,25 @@ interface AssetRepository {
     @Throws(InfraUnexpectedException::class)
     fun findAll(): List<Asset>
 
-//    @Throws(InfraUnexpectedException::class)
-//    fun findAllByGoal(goalId: Long): List<Asset>
+    @Throws(InfraUnexpectedException::class)
+    fun findAllByGoal(goalId: Long): List<Asset>
 
     @Throws(InfraUnexpectedException::class)
     fun findById(assetId: Long): Asset?
 
     @Throws(InfraUnexpectedException::class)
-    fun findByTicker(ticker: String): Asset?
+    fun findByTicker(ticker: String, goalId: Long): Asset?
 
     @Throws(InfraUnexpectedException::class)
     fun save(asset: Asset): Asset
 
     @Throws(InfraUnexpectedException::class)
     fun delete(assetId: Long)
+
+    @Throws(InfraUnexpectedException::class)
+    fun deleteAll(assets: List<Asset>)
+
+    @Throws(InfraUnexpectedException::class)
+    fun existsById(assetId: Long): Boolean
 
 }

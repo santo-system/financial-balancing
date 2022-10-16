@@ -17,11 +17,13 @@ data class AssetRequestDTO(
     @Positive
     private val averagePrice: BigDecimal,
 ) {
-    fun toDomain(): Asset {
+    fun toDomain(assetId: Long? = null, goalId: Long? = null): Asset {
         return Asset(
+            id = assetId,
             ticker = ticker,
             quantity = quantity,
-            averagePrice = averagePrice
+            averagePrice = averagePrice,
+            goalId = goalId
         )
     }
 }

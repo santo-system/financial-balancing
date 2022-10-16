@@ -3,6 +3,8 @@ package com.santosystem.financial.balancing.entity
 import com.santosystem.financial.balancing.entity.AssetEntity.Companion.toEntity
 import com.santosystem.financial.balancing.entity.AssetEntity.Companion.toModel
 import com.santosystem.financial.balancing.model.Goal
+import org.hibernate.annotations.OnDelete
+import org.hibernate.annotations.OnDeleteAction
 import org.springframework.data.annotation.CreatedDate
 import org.springframework.data.annotation.LastModifiedDate
 import org.springframework.data.jpa.domain.support.AuditingEntityListener
@@ -38,6 +40,7 @@ class GoalEntity(
 
     @JoinColumn(name = "goal_id", referencedColumnName = "id")
     @OneToMany(fetch = FetchType.EAGER)
+    @OnDelete(action = OnDeleteAction.CASCADE)
     val assetEntities: List<AssetEntity>? = emptyList(),
 
     @Column(name = "wallet_id", updatable = false)

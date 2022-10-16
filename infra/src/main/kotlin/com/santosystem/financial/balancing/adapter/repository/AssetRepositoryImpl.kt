@@ -1,11 +1,12 @@
 package com.santosystem.financial.balancing.adapter.repository
 
 import com.santosystem.financial.balancing.adapter.repository.jpa.AssetJpaRepository
-import com.santosystem.financial.balancing.entity.AssetEntity
 import com.santosystem.financial.balancing.entity.AssetEntity.Companion.toEntity
 import com.santosystem.financial.balancing.entity.AssetEntity.Companion.toModel
+import com.santosystem.financial.balancing.entity.GoalEntity.Companion.toEntity
 import com.santosystem.financial.balancing.exception.InfraUnexpectedException
 import com.santosystem.financial.balancing.model.Asset
+import com.santosystem.financial.balancing.model.Goal
 import com.santosystem.financial.balancing.port.repository.AssetRepository
 import org.slf4j.LoggerFactory
 import org.springframework.data.repository.findByIdOrNull
@@ -15,49 +16,49 @@ import org.springframework.transaction.annotation.Transactional
 @Component
 class AssetRepositoryImpl(private val repository: AssetJpaRepository) : AssetRepository {
 
-    private val logger = LoggerFactory.getLogger(AssetRepositoryImpl::class.java)
+    private val logger = LoggerFactory.getLogger(this::class.java)
 
     @Throws(InfraUnexpectedException::class)
     @Transactional(readOnly = true)
     override fun findAll(): List<Asset> {
         runCatching {
-            val entityList: List<AssetEntity> = repository.findAll()
-            return entityList.toModel()
+            return repository.findAll().toModel()
         }.getOrElse {
-            logger.error("Asset unexpected error in findAll method. Original message: {}", it.message)
-            throw InfraUnexpectedException("Asset unexpected error in findAll method")
+            val methodName = object {}.javaClass.enclosingMethod.name
+            throw infraUnexpectedException(it.message.toString(), methodName)
         }
     }
 
-//    override fun findAllByGoal(goalId: Long): List<Asset> {
-//        runCatching {
-//            val entityList: List<AssetEntity> = repository.findAllByGoalId(goalId)
-//            return entityList.toModelList()
-//        }.getOrElse {
-//            logger.error("Asset unexpected error in findAll method. Original message: {}", it.message)
-//            throw InfraUnexpectedException("Asset unexpected error in findAll method")
-//        }
-//    }
+    @Throws(InfraUnexpectedException::class)
+    @Transactional(readOnly = true)
+    override fun findAllByGoal(goalId: Long): List<Asset> {
+        runCatching {
+            return repository.findAllByGoalId(goalId).toModel()
+        }.getOrElse {
+            val methodName = object {}.javaClass.enclosingMethod.name
+            throw infraUnexpectedException(it.message.toString(), methodName)
+        }
+    }
 
     @Throws(InfraUnexpectedException::class)
     @Transactional(readOnly = true)
     override fun findById(assetId: Long): Asset? {
         runCatching {
-            val entity: AssetEntity? = repository.findByIdOrNull(assetId)
-            return entity?.toModel()
+            return repository.findByIdOrNull(assetId)?.toModel()
         }.getOrElse {
-            logger.error("Asset unexpected error in findById method. Original message: {}", it.message)
-            throw InfraUnexpectedException("Asset unexpected error in findById method")
+            val methodName = object {}.javaClass.enclosingMethod.name
+            throw infraUnexpectedException(it.message.toString(), methodName)
         }
     }
 
-    override fun findByTicker(ticker: String): Asset? {
+    @Throws(InfraUnexpectedException::class)
+    @Transactional(readOnly = true)
+    override fun findByTicker(ticker: String, goalId: Long): Asset? {
         runCatching {
-            val entity: AssetEntity? = repository.findByTicker(ticker)
-            return entity?.toModel()
+            return repository.findByTickerAndGoalId(ticker, goalId)?.toModel()
         }.getOrElse {
-            logger.error("Asset unexpected error in findById method. Original message: {}", it.message)
-            throw InfraUnexpectedException("Asset unexpected error in findById method")
+            val methodName = object {}.javaClass.enclosingMethod.name
+            throw infraUnexpectedException(it.message.toString(), methodName)
         }
     }
 
@@ -65,11 +66,10 @@ class AssetRepositoryImpl(private val repository: AssetJpaRepository) : AssetRep
     @Transactional
     override fun save(asset: Asset): Asset {
         runCatching {
-            val entity: AssetEntity = repository.save(asset.toEntity())
-            return entity.toModel()
+            return repository.save(asset.toEntity()).toModel()
         }.getOrElse {
-            logger.error("Asset unexpected error in save method. Original message: {}", it.message)
-            throw InfraUnexpectedException("Asset unexpected error in save method")
+            val methodName = object {}.javaClass.enclosingMethod.name
+            throw infraUnexpectedException(it.message.toString(), methodName)
         }
     }
 
@@ -79,9 +79,41 @@ class AssetRepositoryImpl(private val repository: AssetJpaRepository) : AssetRep
         runCatching {
             repository.deleteById(assetId)
         }.getOrElse {
-            logger.error("Asset unexpected error in delete method. Original message: {}", it.message)
-            throw InfraUnexpectedException("Asset unexpected error in delete method")
+            val methodName = object {}.javaClass.enclosingMethod.name
+            throw infraUnexpectedException(it.message.toString(), methodName)
         }
+    }
+
+    @Throws(InfraUnexpectedException::class)
+    @Transactional
+    override fun deleteAll(assets: List<Asset>) {
+        runCatching {
+            repository.deleteAll(assets.toEntity())
+        }.getOrElse {
+            val methodName = object {}.javaClass.enclosingMethod.name
+            throw infraUnexpectedException(it.message.toString(), methodName)
+        }
+    }
+
+    @Throws(InfraUnexpectedException::class)
+    @Transactional(readOnly = true)
+    override fun existsById(assetId: Long): Boolean {
+        runCatching {
+            return repository.existsById(assetId)
+        }.getOrElse {
+            val methodName = object {}.javaClass.enclosingMethod.name
+            throw infraUnexpectedException(it.message.toString(), methodName)
+        }
+    }
+
+    @Throws(InfraUnexpectedException::class)
+    private fun infraUnexpectedException(message: String, method: String): InfraUnexpectedException {
+        val methodName = object {}.javaClass.enclosingMethod.name
+        logger.error(
+            "[$methodName] - An unexpected error occurred with the Asset in the $method method." +
+                    " Original message: {}", message
+        )
+        throw InfraUnexpectedException("An unexpected error occurred with the Asset")
     }
 
 }

@@ -11,7 +11,7 @@ import java.util.Objects
 
 class GoalServiceImpl(private val repository: GoalRepository) : GoalService {
 
-    private val logger = LoggerFactory.getLogger(GoalServiceImpl::class.java)
+    private val logger = LoggerFactory.getLogger(this::class.java)
 
     override fun findAll(): List<Goal> {
         return repository.findAll()
@@ -51,7 +51,7 @@ class GoalServiceImpl(private val repository: GoalRepository) : GoalService {
     private fun verifyIdIsNull(goalId: Long?) {
         if (Objects.isNull(goalId) || goalId == 0L) {
             val methodName = object{}.javaClass.enclosingMethod.name
-            logger.error("[$methodName] - Goal ID required.")
+            logger.error("[$methodName] - Goal ID required")
             BusinessError.required("Goal ID")
         }
     }

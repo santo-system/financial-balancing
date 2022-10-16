@@ -8,19 +8,21 @@ interface AssetService {
 
     fun findAll(): List<Asset>
 
-//    fun findAllByGoal(goalId: Long): List<Asset>
-
-    @Throws(BusinessNotFoundException::class, BusinessException::class)
-    fun findById(assetId: Long?): Asset
+    fun findAllByGoal(goalId: Long): List<Asset>
 
     @Throws(BusinessNotFoundException::class)
-    fun findByTicker(ticker: String): Asset
+    fun findById(assetId: Long): Asset
+
+    @Throws(BusinessNotFoundException::class)
+    fun findByTicker(ticker: String, goalId: Long): Asset
 
     fun save(asset: Asset): Asset
 
-    @Throws(BusinessNotFoundException::class, BusinessException::class)
     fun update(asset: Asset): Asset
 
-    fun delete(assetId: Long?)
+    fun delete(assetId: Long)
+
+    @Throws(BusinessException::class)
+    fun existsById(goalId: Long?): Boolean
 
 }

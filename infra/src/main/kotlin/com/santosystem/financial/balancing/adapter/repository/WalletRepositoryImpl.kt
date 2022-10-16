@@ -5,6 +5,7 @@ import com.santosystem.financial.balancing.entity.WalletEntity.Companion.toEntit
 import com.santosystem.financial.balancing.entity.WalletEntity.Companion.toModel
 import com.santosystem.financial.balancing.exception.InfraUnexpectedException
 import com.santosystem.financial.balancing.model.Wallet
+import com.santosystem.financial.balancing.port.repository.GoalRepository
 import com.santosystem.financial.balancing.port.repository.WalletRepository
 import org.slf4j.LoggerFactory
 import org.springframework.data.repository.findByIdOrNull
@@ -12,15 +13,18 @@ import org.springframework.stereotype.Component
 import org.springframework.transaction.annotation.Transactional
 
 @Component
-class WalletRepositoryImpl(private val repository: WalletJpaRepository) : WalletRepository {
+class WalletRepositoryImpl(
+    private val repositoryWallet: WalletJpaRepository,
+    private val repositoryGoal: GoalRepository
+) : WalletRepository {
 
-    private val logger = LoggerFactory.getLogger(WalletRepositoryImpl::class.java)
+    private val logger = LoggerFactory.getLogger(this::class.java)
 
     @Throws(InfraUnexpectedException::class)
     @Transactional(readOnly = true)
     override fun findAll(): List<Wallet> {
         runCatching {
-            return repository.findAll().toModel()
+            return repositoryWallet.findAll().toModel()
         }.getOrElse {
             val methodName = object {}.javaClass.enclosingMethod.name
             throw infraUnexpectedException(it.message.toString(), methodName)
@@ -31,7 +35,7 @@ class WalletRepositoryImpl(private val repository: WalletJpaRepository) : Wallet
     @Transactional(readOnly = true)
     override fun findById(walletId: Long): Wallet? {
         runCatching {
-            return repository.findByIdOrNull(walletId)?.toModel()
+            return repositoryWallet.findByIdOrNull(walletId)?.toModel()
         }.getOrElse {
             val methodName = object {}.javaClass.enclosingMethod.name
             throw infraUnexpectedException(it.message.toString(), methodName)
@@ -42,7 +46,7 @@ class WalletRepositoryImpl(private val repository: WalletJpaRepository) : Wallet
     @Transactional
     override fun save(wallet: Wallet): Wallet {
         runCatching {
-            return repository.save(wallet.toEntity()).toModel()
+            return repositoryWallet.save(wallet.toEntity()).toModel()
         }.getOrElse {
             val methodName = object {}.javaClass.enclosingMethod.name
             throw infraUnexpectedException(it.message.toString(), methodName)
@@ -53,17 +57,21 @@ class WalletRepositoryImpl(private val repository: WalletJpaRepository) : Wallet
     @Transactional
     override fun delete(walletId: Long) {
         runCatching {
-            repository.deleteById(walletId)
-        }.getOrElse {
+            repositoryGoal.deleteAll(
+                repositoryGoal.findAllByWallet(walletId)
+            )
+            repositoryWallet.deleteById(walletId)
+        }.onFailure {
             val methodName = object {}.javaClass.enclosingMethod.name
             throw infraUnexpectedException(it.message.toString(), methodName)
         }
     }
 
     @Throws(InfraUnexpectedException::class)
+    @Transactional(readOnly = true)
     override fun existsById(walletId: Long): Boolean {
         runCatching {
-            return repository.existsById(walletId)
+            return repositoryWallet.existsById(walletId)
         }.getOrElse {
             val methodName = object {}.javaClass.enclosingMethod.name
             throw infraUnexpectedException(it.message.toString(), methodName)

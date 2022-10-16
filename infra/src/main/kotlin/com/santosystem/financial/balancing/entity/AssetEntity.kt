@@ -51,6 +51,9 @@ data class AssetEntity(
 
     val quantity: Int,
 
+    @Column(name = "goal_id", updatable = false)
+    val goalId: Long? = null,
+
     @CreatedDate
     @Column(updatable = false)
     var createdAt: ZonedDateTime? = null,
@@ -72,8 +75,9 @@ data class AssetEntity(
                 assetType = assetType,
                 averagePrice = averagePrice,
                 quantity = quantity,
-                createdAt,
-                updatedAt
+                goalId = goalId,
+                createdAt = createdAt,
+                updatedAt = updatedAt
             )
         }
 
@@ -101,8 +105,9 @@ data class AssetEntity(
             assetType = assetType,
             averagePrice = averagePrice,
             quantity = quantity,
-            createdAt,
-            updatedAt
+            goalId = goalId,
+            createdAt = createdAt,
+            updatedAt = updatedAt
         )
     }
 

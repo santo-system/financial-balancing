@@ -14,6 +14,7 @@ data class Asset(
     val assetType: AssetType? = null,
     val averagePrice: BigDecimal,
     val quantity: Int,
+    val goalId: Long? = null,
     val createdAt: ZonedDateTime? = null,
     val updatedAt: ZonedDateTime? = null
 )

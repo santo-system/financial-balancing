@@ -5,6 +5,7 @@ import com.santosystem.financial.balancing.entity.GoalEntity.Companion.toEntity
 import com.santosystem.financial.balancing.entity.GoalEntity.Companion.toModel
 import com.santosystem.financial.balancing.exception.InfraUnexpectedException
 import com.santosystem.financial.balancing.model.Goal
+import com.santosystem.financial.balancing.port.repository.AssetRepository
 import com.santosystem.financial.balancing.port.repository.GoalRepository
 import org.slf4j.LoggerFactory
 import org.springframework.data.repository.findByIdOrNull
@@ -12,24 +13,29 @@ import org.springframework.stereotype.Component
 import org.springframework.transaction.annotation.Transactional
 
 @Component
-class GoalRepositoryImpl(private val repository: GoalJpaRepository) : GoalRepository {
+class GoalRepositoryImpl(
+    private val repositoryGoal: GoalJpaRepository,
+    private val repositoryAsset: AssetRepository
+) : GoalRepository {
 
-    private val logger = LoggerFactory.getLogger(GoalRepositoryImpl::class.java)
+    private val logger = LoggerFactory.getLogger(this::class.java)
 
     @Throws(InfraUnexpectedException::class)
     @Transactional(readOnly = true)
     override fun findAll(): List<Goal> {
         runCatching {
-            return repository.findAll().toModel()
+            return repositoryGoal.findAll().toModel()
         }.getOrElse {
             val methodName = object {}.javaClass.enclosingMethod.name
             throw infraUnexpectedException(it.message.toString(), methodName)
         }
     }
 
+    @Throws(InfraUnexpectedException::class)
+    @Transactional(readOnly = true)
     override fun findAllByWallet(walletId: Long): List<Goal> {
         runCatching {
-            return repository.findAllByWalletId(walletId).toModel()
+            return repositoryGoal.findAllByWalletId(walletId).toModel()
         }.getOrElse {
             val methodName = object {}.javaClass.enclosingMethod.name
             throw infraUnexpectedException(it.message.toString(), methodName)
@@ -40,7 +46,7 @@ class GoalRepositoryImpl(private val repository: GoalJpaRepository) : GoalReposi
     @Transactional(readOnly = true)
     override fun findById(goalId: Long): Goal? {
         runCatching {
-            return repository.findByIdOrNull(goalId)?.toModel()
+            return repositoryGoal.findByIdOrNull(goalId)?.toModel()
         }.getOrElse {
             val methodName = object {}.javaClass.enclosingMethod.name
             throw infraUnexpectedException(it.message.toString(), methodName)
@@ -51,7 +57,7 @@ class GoalRepositoryImpl(private val repository: GoalJpaRepository) : GoalReposi
     @Transactional
     override fun save(goal: Goal): Goal {
         runCatching {
-            return repository.save(goal.toEntity()).toModel()
+            return repositoryGoal.save(goal.toEntity()).toModel()
         }.getOrElse {
             val methodName = object {}.javaClass.enclosingMethod.name
             throw infraUnexpectedException(it.message.toString(), methodName)
@@ -62,7 +68,10 @@ class GoalRepositoryImpl(private val repository: GoalJpaRepository) : GoalReposi
     @Transactional
     override fun delete(goalId: Long) {
         runCatching {
-            repository.deleteById(goalId)
+            repositoryAsset.deleteAll(
+                repositoryAsset.findAllByGoal(goalId)
+            )
+            repositoryGoal.deleteById(goalId)
         }.getOrElse {
             val methodName = object {}.javaClass.enclosingMethod.name
             throw infraUnexpectedException(it.message.toString(), methodName)
@@ -70,9 +79,24 @@ class GoalRepositoryImpl(private val repository: GoalJpaRepository) : GoalReposi
     }
 
     @Throws(InfraUnexpectedException::class)
+    @Transactional
+    override fun deleteAll(goals: List<Goal>) {
+        runCatching {
+            repositoryAsset.deleteAll(
+                repositoryAsset.findAllByGoal(goals.firstOrNull()?.id ?: 0L)
+            )
+            repositoryGoal.deleteAll(goals.toEntity())
+        }.getOrElse {
+            val methodName = object {}.javaClass.enclosingMethod.name
+            throw infraUnexpectedException(it.message.toString(), methodName)
+        }
+    }
+
+    @Throws(InfraUnexpectedException::class)
+    @Transactional(readOnly = true)
     override fun existsById(goalId: Long): Boolean {
         runCatching {
-            return repository.existsById(goalId)
+            return repositoryGoal.existsById(goalId)
         }.getOrElse {
             val methodName = object {}.javaClass.enclosingMethod.name
             throw infraUnexpectedException(it.message.toString(), methodName)

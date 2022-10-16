@@ -2,7 +2,6 @@ package com.santosystem.financial.balancing.adapter.service
 
 import com.santosystem.financial.balancing.adapter.service.mock.mockWallet
 import com.santosystem.financial.balancing.adapter.service.mock.mockWalletList
-import com.santosystem.financial.balancing.exception.BusinessException
 import com.santosystem.financial.balancing.exception.BusinessNotFoundException
 import com.santosystem.financial.balancing.model.Wallet
 import com.santosystem.financial.balancing.port.repository.WalletRepository
@@ -75,7 +74,7 @@ internal class WalletServiceImplTest {
         // then
         verify(exactly = 1) { repository.findById(10L) }
         verify(exactly = 1) { walletService.findById(10L) }
-        assertEquals("Wallet not found.", exception.message)
+        assertEquals("Wallet not found", exception.message)
     }
 
     @Test
@@ -84,13 +83,14 @@ internal class WalletServiceImplTest {
         every { repository.findById(any()) } returns null
 
         // when
-        val exception = Assertions.assertThrows(BusinessException::class.java) {
-            walletService.findById(null)
+        val exception = Assertions.assertThrows(BusinessNotFoundException::class.java) {
+            walletService.findById(0L)
         }
 
         // then
-        verify(exactly = 0) { repository.findById(any()) }
-        assertEquals("Wallet ID required.", exception.message)
+        verify(exactly = 1) { repository.findById(0L) }
+        verify(exactly = 1) { walletService.findById(0L) }
+        assertEquals("Wallet not found", exception.message)
     }
 
     @Test

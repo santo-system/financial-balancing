@@ -13,7 +13,8 @@ data class AssetResponseDTO(
     val subSector: String? = null,
     val assetType: AssetType? = null,
     val averagePrice: BigDecimal,
-    val quantity: Int
+    val quantity: Int,
+    val goalId: Long?,
 ) {
     companion object {
         fun Asset.toResponseDTO(): AssetResponseDTO {
@@ -26,8 +27,15 @@ data class AssetResponseDTO(
                 subSector = subSector,
                 assetType = assetType,
                 averagePrice = averagePrice,
-                quantity = quantity
+                quantity = quantity,
+                goalId = goalId
             )
+        }
+
+        fun List<Asset>.toResponseDTO(): List<AssetResponseDTO> {
+            return map {
+                it.toResponseDTO()
+            }
         }
     }
 }

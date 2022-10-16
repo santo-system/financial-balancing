@@ -1,9 +1,11 @@
 package com.santosystem.financial.balancing.controller
 
 import com.santosystem.financial.balancing.dto.request.GoalRequestDTO
+import com.santosystem.financial.balancing.dto.response.AssetResponseDTO
+import com.santosystem.financial.balancing.dto.response.AssetResponseDTO.Companion.toResponseDTO
 import com.santosystem.financial.balancing.dto.response.GoalResponseDTO
 import com.santosystem.financial.balancing.dto.response.GoalResponseDTO.Companion.toResponseDTO
-import com.santosystem.financial.balancing.exception.BusinessNotFoundException
+import com.santosystem.financial.balancing.port.service.AssetService
 import com.santosystem.financial.balancing.port.service.GoalService
 import com.santosystem.financial.balancing.port.service.WalletService
 import org.slf4j.LoggerFactory
@@ -27,17 +29,18 @@ import javax.validation.Valid
 @ResponseBody
 class GoalController(
     private val serviceGoal: GoalService,
-    private val serviceWallet: WalletService
+    private val serviceWallet: WalletService,
+    private val serviceAsset: AssetService
 ) {
 
-    private val logger = LoggerFactory.getLogger(GoalController::class.java)
+    private val logger = LoggerFactory.getLogger(this::class.java)
 
     @PostMapping()
     fun createGoal(
         @RequestParam(name = "walletId", required = true) walletId: Long,
         @Valid @RequestBody request: GoalRequestDTO
     ): ResponseEntity<GoalResponseDTO> {
-        val methodName = object{}.javaClass.enclosingMethod.name
+        val methodName = object {}.javaClass.enclosingMethod.name
         logger.info("[$methodName] - Starting to create a goal: {} with the walletId: {}", request, walletId)
 
         walletId.takeIf {
@@ -50,7 +53,7 @@ class GoalController(
             return ResponseEntity.status(HttpStatus.CREATED).body(createdGoal.toResponseDTO())
         }
 
-        throw walletNotFoundException(walletId)
+        throw walletNotFoundException(walletId = walletId)
     }
 
     @PutMapping("/{goalId}")
@@ -58,7 +61,7 @@ class GoalController(
         @PathVariable("goalId") goalId: Long,
         @Valid @RequestBody request: GoalRequestDTO
     ): ResponseEntity<GoalResponseDTO> {
-        val methodName = object{}.javaClass.enclosingMethod.name
+        val methodName = object {}.javaClass.enclosingMethod.name
         logger.info("[$methodName] - Starting to update a goal: {} with the goalId: {}", request, goalId)
 
         goalId.takeIf {
@@ -71,12 +74,12 @@ class GoalController(
             return ResponseEntity.ok(updatedGoal.toResponseDTO())
         }
 
-        throw goalNotFoundException(goalId)
+        throw goalNotFoundException(goalId = goalId)
     }
 
     @GetMapping()
     fun findAllGoals(): ResponseEntity<List<GoalResponseDTO>> {
-        val methodName = object{}.javaClass.enclosingMethod.name
+        val methodName = object {}.javaClass.enclosingMethod.name
         logger.info("[$methodName] - Starting to find all goals")
 
         val allGoals = serviceGoal.findAll()
@@ -86,9 +89,27 @@ class GoalController(
         return ResponseEntity.ok(allGoals.toResponseDTO())
     }
 
+    @GetMapping("/{goalId}/assets")
+    fun findAllAssets(@PathVariable("goalId") goalId: Long): ResponseEntity<List<AssetResponseDTO>> {
+        val methodName = object {}.javaClass.enclosingMethod.name
+        logger.info("[$methodName] - Starting to find all assets with the goalId: {}", goalId)
+
+        goalId.takeIf {
+            serviceGoal.existsById(it)
+        }?.also {
+            val allAssets = serviceAsset.findAllByGoal(it)
+
+            logger.info("[$methodName] - All assets found: {} ", allAssets)
+
+            return ResponseEntity.ok(allAssets.toResponseDTO())
+        }
+
+        throw goalNotFoundException(goalId = goalId)
+    }
+
     @GetMapping("/{goalId}")
     fun findAGoal(@PathVariable("goalId") goalId: Long): ResponseEntity<GoalResponseDTO> {
-        val methodName = object{}.javaClass.enclosingMethod.name
+        val methodName = object {}.javaClass.enclosingMethod.name
         logger.info("[$methodName] - Starting to find a goal with the goalId: {}", goalId)
 
         goalId.takeIf {
@@ -101,32 +122,12 @@ class GoalController(
             return ResponseEntity.ok(foundGoal.toResponseDTO())
         }
 
-        throw goalNotFoundException(goalId)
-    }
-
-    @GetMapping()
-    fun findAllGoalsByWallet(
-        @RequestParam(name = "walletId", required = true) walletId: Long
-    ): ResponseEntity<List<GoalResponseDTO>> {
-        val methodName = object{}.javaClass.enclosingMethod.name
-        logger.info("[$methodName] - Starting to find all goals with the walletId: {}", walletId)
-
-        walletId.takeIf {
-            serviceWallet.existsById(it)
-        }?.also {
-            val allGoals = serviceGoal.findAllByWallet(walletId)
-
-            logger.info("[$methodName] - All goals found: {} ", allGoals)
-
-            return ResponseEntity.ok(allGoals.toResponseDTO())
-        }
-
-        throw walletNotFoundException(walletId)
+        throw goalNotFoundException(goalId = goalId)
     }
 
     @DeleteMapping("/{goalId}")
-    fun deleteGoal(@PathVariable("goalId") goalId: Long): ResponseEntity<Unit> {
-        val methodName = object{}.javaClass.enclosingMethod.name
+    fun deleteGoal(@PathVariable("goalId") goalId: Long): ResponseEntity<String> {
+        val methodName = object {}.javaClass.enclosingMethod.name
         logger.info("[$methodName] - Starting to delete a goal with the goalId: {}", goalId)
 
         goalId.takeIf {
@@ -139,19 +140,19 @@ class GoalController(
             return ResponseEntity.ok().build()
         }
 
-        throw goalNotFoundException(goalId)
+        throw goalNotFoundException(goalId = goalId)
     }
 
     @Throws(ResponseStatusException::class)
-    private fun goalNotFoundException(goalId: Long?): BusinessNotFoundException {
-        val methodName = object{}.javaClass.enclosingMethod.name
+    private fun goalNotFoundException(goalId: Long?): ResponseStatusException {
+        val methodName = object {}.javaClass.enclosingMethod.name
         logger.error("[$methodName] - Goal not found with id: {} ", goalId)
         throw ResponseStatusException(HttpStatus.NOT_FOUND, "Goal not found")
     }
 
     @Throws(ResponseStatusException::class)
-    private fun walletNotFoundException(walletId: Long?): BusinessNotFoundException {
-        val methodName = object{}.javaClass.enclosingMethod.name
+    private fun walletNotFoundException(walletId: Long?): ResponseStatusException {
+        val methodName = object {}.javaClass.enclosingMethod.name
         logger.error("[$methodName] - Wallet not found with id: {} ", walletId)
         throw ResponseStatusException(HttpStatus.NOT_FOUND, "Wallet not found")
     }
