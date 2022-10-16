@@ -2,21 +2,41 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 val logbackVersion: String by project
 
+buildscript {
+    repositories {
+        mavenCentral()
+    }
+}
+
 plugins {
-    kotlin("jvm") version "1.7.10"
+    kotlin("jvm") version "1.7.10" apply false
     java
 }
+
+java.sourceCompatibility = JavaVersion.VERSION_11
+java.targetCompatibility = JavaVersion.VERSION_11
 
 allprojects {
     group = "com.santosystem"
     version = "1.0-SNAPSHOT"
+
+    apply(plugin = "java")
+
+    tasks.withType<JavaCompile> {
+        sourceCompatibility = JavaVersion.VERSION_11.toString()
+        targetCompatibility = JavaVersion.VERSION_11.toString()
+    }
+
+    tasks.withType<KotlinCompile> {
+        kotlinOptions {
+            freeCompilerArgs = listOf("-Xjsr305=strict")
+            jvmTarget = JavaVersion.VERSION_11.toString()
+        }
+    }
 }
 
 subprojects {
     apply(plugin = "kotlin")
-
-    java.sourceCompatibility = JavaVersion.VERSION_11
-    java.targetCompatibility = JavaVersion.VERSION_11
 
     repositories {
         mavenCentral()
@@ -42,12 +62,5 @@ subprojects {
 
     tasks.test {
         useJUnitPlatform()
-    }
-
-    tasks.withType<KotlinCompile> {
-        kotlinOptions {
-            freeCompilerArgs = listOf("-Xjsr305=strict")
-            jvmTarget = JavaVersion.VERSION_11.toString()
-        }
     }
 }
