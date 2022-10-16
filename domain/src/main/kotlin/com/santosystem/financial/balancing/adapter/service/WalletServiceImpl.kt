@@ -17,14 +17,11 @@ class WalletServiceImpl(private val repository: WalletRepository) : WalletServic
         return repository.findAll()
     }
 
-    @Throws(BusinessNotFoundException::class, BusinessException::class)
-    override fun findById(walletId: Long?): Wallet {
-        verifyWalletIdIsNull(walletId)
-
-        return when (val walletFound = repository.findById(walletId ?: 0)) {
+    @Throws(BusinessNotFoundException::class)
+    override fun findById(walletId: Long): Wallet {
+        return when (val foundWallet = repository.findById(walletId)) {
             null -> throw businessNotFoundException(walletId)
-
-            else -> walletFound
+            else -> foundWallet
         }
     }
 
@@ -32,37 +29,34 @@ class WalletServiceImpl(private val repository: WalletRepository) : WalletServic
         return repository.save(wallet)
     }
 
-    @Throws(BusinessNotFoundException::class, BusinessException::class)
     override fun update(wallet: Wallet): Wallet {
-        verifyWalletIdIsNull(wallet.id)
-
-        return when (repository.findById(wallet.id ?: 0)) {
-            null -> throw businessNotFoundException(wallet.id)
-
-            else -> repository.save(wallet)
-        }
+        return repository.save(wallet)
     }
 
-    override fun delete(walletId: Long?) {
-        verifyWalletIdIsNull(walletId)
-        repository.delete(walletId ?: 0)
-    }
-
-    override fun existsById(goalId: Long?): Boolean {
-        return repository.existsById(goalId ?: 0)
+    override fun delete(walletId: Long) {
+        repository.delete(walletId)
     }
 
     @Throws(BusinessException::class)
-    private fun verifyWalletIdIsNull(walletId: Long?) {
+    override fun existsById(walletId: Long?): Boolean {
+        verifyIdIsNull(walletId)
+        return repository.existsById(walletId ?: 0)
+    }
+
+    @Throws(BusinessException::class)
+    private fun verifyIdIsNull(walletId: Long?) {
         if (Objects.isNull(walletId) || walletId == 0L) {
-            logger.error("Wallet ID required.")
+            val methodName = object{}.javaClass.enclosingMethod.name
+            logger.error("[$methodName] - Wallet ID required.")
             BusinessError.required("Wallet ID")
         }
     }
 
+    @Throws(BusinessNotFoundException::class)
     private fun businessNotFoundException(walletId: Long?): BusinessNotFoundException {
-        logger.error("Wallet not found with walletId: {} ", walletId)
-        throw BusinessNotFoundException("Wallet not found.")
+        val methodName = object{}.javaClass.enclosingMethod.name
+        logger.error("[$methodName] - Wallet not found with id: {} ", walletId)
+        throw BusinessNotFoundException("Wallet not found")
     }
 
 }

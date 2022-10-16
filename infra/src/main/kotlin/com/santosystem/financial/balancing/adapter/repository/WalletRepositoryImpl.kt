@@ -1,9 +1,8 @@
 package com.santosystem.financial.balancing.adapter.repository
 
 import com.santosystem.financial.balancing.adapter.repository.jpa.WalletJpaRepository
-import com.santosystem.financial.balancing.entity.WalletEntity
 import com.santosystem.financial.balancing.entity.WalletEntity.Companion.toEntity
-import com.santosystem.financial.balancing.entity.WalletEntity.Companion.toModelList
+import com.santosystem.financial.balancing.entity.WalletEntity.Companion.toModel
 import com.santosystem.financial.balancing.exception.InfraUnexpectedException
 import com.santosystem.financial.balancing.model.Wallet
 import com.santosystem.financial.balancing.port.repository.WalletRepository
@@ -21,11 +20,10 @@ class WalletRepositoryImpl(private val repository: WalletJpaRepository) : Wallet
     @Transactional(readOnly = true)
     override fun findAll(): List<Wallet> {
         runCatching {
-            val entityList: List<WalletEntity> = repository.findAll()
-            return entityList.toModelList()
+            return repository.findAll().toModel()
         }.getOrElse {
-            logger.error("Wallet unexpected error in findAll method. Original message: {}", it.message)
-            throw InfraUnexpectedException("Wallet unexpected error in findAll method")
+            val methodName = object {}.javaClass.enclosingMethod.name
+            throw infraUnexpectedException(it.message.toString(), methodName)
         }
     }
 
@@ -33,11 +31,10 @@ class WalletRepositoryImpl(private val repository: WalletJpaRepository) : Wallet
     @Transactional(readOnly = true)
     override fun findById(walletId: Long): Wallet? {
         runCatching {
-            val entity: WalletEntity? = repository.findByIdOrNull(walletId)
-            return entity?.toModel()
+            return repository.findByIdOrNull(walletId)?.toModel()
         }.getOrElse {
-            logger.error("Wallet unexpected error in findById method. Original message: {}", it.message)
-            throw InfraUnexpectedException("Wallet unexpected error in findById method")
+            val methodName = object {}.javaClass.enclosingMethod.name
+            throw infraUnexpectedException(it.message.toString(), methodName)
         }
     }
 
@@ -45,11 +42,10 @@ class WalletRepositoryImpl(private val repository: WalletJpaRepository) : Wallet
     @Transactional
     override fun save(wallet: Wallet): Wallet {
         runCatching {
-            val entity: WalletEntity = repository.save(wallet.toEntity())
-            return entity.toModel()
+            return repository.save(wallet.toEntity()).toModel()
         }.getOrElse {
-            logger.error("Wallet unexpected error in save method. Original message: {}", it.message)
-            throw InfraUnexpectedException("Wallet unexpected error in save method")
+            val methodName = object {}.javaClass.enclosingMethod.name
+            throw infraUnexpectedException(it.message.toString(), methodName)
         }
     }
 
@@ -59,13 +55,29 @@ class WalletRepositoryImpl(private val repository: WalletJpaRepository) : Wallet
         runCatching {
             repository.deleteById(walletId)
         }.getOrElse {
-            logger.error("Wallet unexpected error in delete method. Original message: {}", it.message)
-            throw InfraUnexpectedException("Wallet unexpected error in delete method")
+            val methodName = object {}.javaClass.enclosingMethod.name
+            throw infraUnexpectedException(it.message.toString(), methodName)
         }
     }
 
-    override fun existsById(goalId: Long): Boolean {
-        return repository.existsById(goalId)
+    @Throws(InfraUnexpectedException::class)
+    override fun existsById(walletId: Long): Boolean {
+        runCatching {
+            return repository.existsById(walletId)
+        }.getOrElse {
+            val methodName = object {}.javaClass.enclosingMethod.name
+            throw infraUnexpectedException(it.message.toString(), methodName)
+        }
+    }
+
+    @Throws(InfraUnexpectedException::class)
+    private fun infraUnexpectedException(message: String, method: String): InfraUnexpectedException {
+        val methodName = object {}.javaClass.enclosingMethod.name
+        logger.error(
+            "[$methodName] - An unexpected error occurred with the Wallet in the $method method." +
+                    " Original message: {}", message
+        )
+        throw InfraUnexpectedException("An unexpected error occurred with the Wallet")
     }
 
 }

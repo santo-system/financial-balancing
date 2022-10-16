@@ -64,17 +64,9 @@ data class WalletEntity(
             )
         }
 
-        fun List<WalletEntity>.toModelList(): List<Wallet> {
+        fun List<WalletEntity>.toModel(): List<Wallet> {
             return map {
-                Wallet(
-                    id = it.id,
-                    name = it.name,
-                    description = it.description,
-                    main = it.main,
-                    goals = it.goalEntities?.toModel(),
-                    it.createdAt,
-                    it.updatedAt
-                )
+                it.toModel()
             }
         }
     }

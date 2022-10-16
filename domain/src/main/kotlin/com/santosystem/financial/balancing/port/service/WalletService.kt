@@ -8,16 +8,16 @@ interface WalletService {
 
     fun findAll(): List<Wallet>
 
-    @Throws(BusinessNotFoundException::class, BusinessException::class)
-    fun findById(walletId: Long?): Wallet
+    @Throws(BusinessNotFoundException::class)
+    fun findById(walletId: Long): Wallet
 
     fun save(wallet: Wallet): Wallet
 
-    @Throws(BusinessNotFoundException::class, BusinessException::class)
     fun update(wallet: Wallet): Wallet
 
-    fun delete(walletId: Long?)
+    fun delete(walletId: Long)
 
-    fun existsById(goalId: Long?): Boolean
+    @Throws(BusinessException::class)
+    fun existsById(walletId: Long?): Boolean
 
 }

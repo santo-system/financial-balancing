@@ -18,14 +18,14 @@ class GoalServiceImpl(private val repository: GoalRepository) : GoalService {
     }
 
     override fun findAllByWallet(walletId: Long): List<Goal> {
-        return repository.findAllByWallet(walletId ?: 0)
+        return repository.findAllByWallet(walletId)
     }
 
     @Throws(BusinessNotFoundException::class)
     override fun findById(goalId: Long): Goal {
-        return when (val goalFound = repository.findById(goalId)) {
+        return when (val foundGoal = repository.findById(goalId)) {
             null -> throw businessNotFoundException(goalId)
-            else -> goalFound
+            else -> foundGoal
         }
     }
 
@@ -38,7 +38,7 @@ class GoalServiceImpl(private val repository: GoalRepository) : GoalService {
     }
 
     override fun delete(goalId: Long) {
-        repository.delete(goalId ?: 0)
+        repository.delete(goalId)
     }
 
     @Throws(BusinessException::class)
@@ -50,15 +50,17 @@ class GoalServiceImpl(private val repository: GoalRepository) : GoalService {
     @Throws(BusinessException::class)
     private fun verifyIdIsNull(goalId: Long?) {
         if (Objects.isNull(goalId) || goalId == 0L) {
-            logger.error("Goal ID required.")
+            val methodName = object{}.javaClass.enclosingMethod.name
+            logger.error("[$methodName] - Goal ID required.")
             BusinessError.required("Goal ID")
         }
     }
 
     @Throws(BusinessNotFoundException::class)
     private fun businessNotFoundException(goalId: Long?): BusinessNotFoundException {
-        logger.error("Goal not found with id: {} ", goalId)
-        throw BusinessNotFoundException("Goal not found with id $goalId")
+        val methodName = object{}.javaClass.enclosingMethod.name
+        logger.error("[$methodName] - Goal not found with id: {} ", goalId)
+        throw BusinessNotFoundException("Goal not found")
     }
 
 }

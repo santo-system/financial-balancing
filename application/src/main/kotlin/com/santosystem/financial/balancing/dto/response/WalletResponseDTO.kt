@@ -17,5 +17,11 @@ data class WalletResponseDTO(
                 goals = emptyList(),
             )
         }
+
+        fun List<Wallet>.toResponseDTO(): List<WalletResponseDTO> {
+            return map {
+                it.toResponseDTO()
+            }
+        }
     }
 }

@@ -22,8 +22,8 @@ class GoalRepositoryImpl(private val repository: GoalJpaRepository) : GoalReposi
         runCatching {
             return repository.findAll().toModel()
         }.getOrElse {
-            logger.error("Goal unexpected error in findAll method. Original message: {}", it.message)
-            throw InfraUnexpectedException("Goal unexpected error in findAll method")
+            val methodName = object {}.javaClass.enclosingMethod.name
+            throw infraUnexpectedException(it.message.toString(), methodName)
         }
     }
 
@@ -31,8 +31,8 @@ class GoalRepositoryImpl(private val repository: GoalJpaRepository) : GoalReposi
         runCatching {
             return repository.findAllByWalletId(walletId).toModel()
         }.getOrElse {
-            logger.error("Goal unexpected error in findAllByWallet method. Original message: {}", it.message)
-            throw InfraUnexpectedException("Goal unexpected error in findAllByWallet method")
+            val methodName = object {}.javaClass.enclosingMethod.name
+            throw infraUnexpectedException(it.message.toString(), methodName)
         }
     }
 
@@ -42,8 +42,8 @@ class GoalRepositoryImpl(private val repository: GoalJpaRepository) : GoalReposi
         runCatching {
             return repository.findByIdOrNull(goalId)?.toModel()
         }.getOrElse {
-            logger.error("Goal unexpected error in findById method. Original message: {}", it.message)
-            throw InfraUnexpectedException("Goal unexpected error in findById method")
+            val methodName = object {}.javaClass.enclosingMethod.name
+            throw infraUnexpectedException(it.message.toString(), methodName)
         }
     }
 
@@ -53,8 +53,8 @@ class GoalRepositoryImpl(private val repository: GoalJpaRepository) : GoalReposi
         runCatching {
             return repository.save(goal.toEntity()).toModel()
         }.getOrElse {
-            logger.error("Goal unexpected error in save method. Original message: {}", it.message)
-            throw InfraUnexpectedException("Goal unexpected error in save method")
+            val methodName = object {}.javaClass.enclosingMethod.name
+            throw infraUnexpectedException(it.message.toString(), methodName)
         }
     }
 
@@ -64,8 +64,8 @@ class GoalRepositoryImpl(private val repository: GoalJpaRepository) : GoalReposi
         runCatching {
             repository.deleteById(goalId)
         }.getOrElse {
-            logger.error("Goal unexpected error in delete method. Original message: {}", it.message)
-            throw InfraUnexpectedException("Goal unexpected error in delete method")
+            val methodName = object {}.javaClass.enclosingMethod.name
+            throw infraUnexpectedException(it.message.toString(), methodName)
         }
     }
 
@@ -74,9 +74,19 @@ class GoalRepositoryImpl(private val repository: GoalJpaRepository) : GoalReposi
         runCatching {
             return repository.existsById(goalId)
         }.getOrElse {
-            logger.error("Goal unexpected error in existsById method. Original message: {}", it.message)
-            throw InfraUnexpectedException("Goal unexpected error in existsById method")
+            val methodName = object {}.javaClass.enclosingMethod.name
+            throw infraUnexpectedException(it.message.toString(), methodName)
         }
+    }
+
+    @Throws(InfraUnexpectedException::class)
+    private fun infraUnexpectedException(message: String, method: String): InfraUnexpectedException {
+        val methodName = object {}.javaClass.enclosingMethod.name
+        logger.error(
+            "[$methodName] - An unexpected error occurred with the Goal in the $method method." +
+                    " Original message: {}", message
+        )
+        throw InfraUnexpectedException("An unexpected error occurred with the Goal")
     }
 
 }

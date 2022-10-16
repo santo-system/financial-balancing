@@ -23,7 +23,7 @@ import org.springframework.web.server.ResponseStatusException
 import javax.validation.Valid
 
 @RestController
-@RequestMapping("goals")
+@RequestMapping("/goals")
 @ResponseBody
 class GoalController(
     private val serviceGoal: GoalService,
@@ -37,14 +37,15 @@ class GoalController(
         @RequestParam(name = "walletId", required = true) walletId: Long,
         @Valid @RequestBody request: GoalRequestDTO
     ): ResponseEntity<GoalResponseDTO> {
-        logger.info("Starting to create a goal: {} with the walletId: {}", request, walletId)
+        val methodName = object{}.javaClass.enclosingMethod.name
+        logger.info("[$methodName] - Starting to create a goal: {} with the walletId: {}", request, walletId)
 
         walletId.takeIf {
             serviceWallet.existsById(it)
         }?.also {
             val createdGoal = serviceGoal.save(request.toDomain(walletId = it))
 
-            logger.info("Goal created: {} ", createdGoal)
+            logger.info("[$methodName] - Goal created: {} ", createdGoal)
 
             return ResponseEntity.status(HttpStatus.CREATED).body(createdGoal.toResponseDTO())
         }
@@ -52,19 +53,20 @@ class GoalController(
         throw walletNotFoundException(walletId)
     }
 
-    @PutMapping("{goalId}")
+    @PutMapping("/{goalId}")
     fun updateGoal(
         @PathVariable("goalId") goalId: Long,
         @Valid @RequestBody request: GoalRequestDTO
     ): ResponseEntity<GoalResponseDTO> {
-        logger.info("Starting to update a goal: {} with the goalId: {}", request, goalId)
+        val methodName = object{}.javaClass.enclosingMethod.name
+        logger.info("[$methodName] - Starting to update a goal: {} with the goalId: {}", request, goalId)
 
         goalId.takeIf {
             serviceGoal.existsById(it)
         }?.also {
             val updatedGoal = serviceGoal.update(request.toDomain(goalId = it))
 
-            logger.info("Goal updated: {} ", updatedGoal)
+            logger.info("[$methodName] - Goal updated: {} ", updatedGoal)
 
             return ResponseEntity.ok(updatedGoal.toResponseDTO())
         }
@@ -74,25 +76,27 @@ class GoalController(
 
     @GetMapping()
     fun findAllGoals(): ResponseEntity<List<GoalResponseDTO>> {
-        logger.info("Starting to find all goals")
+        val methodName = object{}.javaClass.enclosingMethod.name
+        logger.info("[$methodName] - Starting to find all goals")
 
         val allGoals = serviceGoal.findAll()
 
-        logger.info("All goals found: {} ", allGoals)
+        logger.info("[$methodName] - All goals found: {} ", allGoals)
 
         return ResponseEntity.ok(allGoals.toResponseDTO())
     }
 
-    @GetMapping("{goalId}")
+    @GetMapping("/{goalId}")
     fun findAGoal(@PathVariable("goalId") goalId: Long): ResponseEntity<GoalResponseDTO> {
-        logger.info("Starting to find a goal with the goalId: {}", goalId)
+        val methodName = object{}.javaClass.enclosingMethod.name
+        logger.info("[$methodName] - Starting to find a goal with the goalId: {}", goalId)
 
         goalId.takeIf {
             serviceGoal.existsById(it)
         }?.also {
             val foundGoal = serviceGoal.findById(it)
 
-            logger.info("Goal found: {} ", foundGoal)
+            logger.info("[$methodName] - Goal found: {} ", foundGoal)
 
             return ResponseEntity.ok(foundGoal.toResponseDTO())
         }
@@ -104,14 +108,15 @@ class GoalController(
     fun findAllGoalsByWallet(
         @RequestParam(name = "walletId", required = true) walletId: Long
     ): ResponseEntity<List<GoalResponseDTO>> {
-        logger.info("Starting to find all goals with the walletId: {}", walletId)
+        val methodName = object{}.javaClass.enclosingMethod.name
+        logger.info("[$methodName] - Starting to find all goals with the walletId: {}", walletId)
 
         walletId.takeIf {
             serviceWallet.existsById(it)
         }?.also {
             val allGoals = serviceGoal.findAllByWallet(walletId)
 
-            logger.info("All goals found: {} ", allGoals)
+            logger.info("[$methodName] - All goals found: {} ", allGoals)
 
             return ResponseEntity.ok(allGoals.toResponseDTO())
         }
@@ -119,16 +124,17 @@ class GoalController(
         throw walletNotFoundException(walletId)
     }
 
-    @DeleteMapping("{goalId}")
+    @DeleteMapping("/{goalId}")
     fun deleteGoal(@PathVariable("goalId") goalId: Long): ResponseEntity<Unit> {
-        logger.info("Starting to delete a goal with the goalId: {}", goalId)
+        val methodName = object{}.javaClass.enclosingMethod.name
+        logger.info("[$methodName] - Starting to delete a goal with the goalId: {}", goalId)
 
         goalId.takeIf {
             serviceGoal.existsById(it)
         }?.also {
-            serviceGoal.delete(goalId)
+            serviceGoal.delete(it)
 
-            logger.info("Goal deleted")
+            logger.info("[$methodName] - Goal deleted")
 
             return ResponseEntity.ok().build()
         }
@@ -138,14 +144,16 @@ class GoalController(
 
     @Throws(ResponseStatusException::class)
     private fun goalNotFoundException(goalId: Long?): BusinessNotFoundException {
-        logger.error("Goal not found with id: {} ", goalId)
-        throw ResponseStatusException(HttpStatus.NOT_FOUND, "Goal not found with id $goalId")
+        val methodName = object{}.javaClass.enclosingMethod.name
+        logger.error("[$methodName] - Goal not found with id: {} ", goalId)
+        throw ResponseStatusException(HttpStatus.NOT_FOUND, "Goal not found")
     }
 
     @Throws(ResponseStatusException::class)
     private fun walletNotFoundException(walletId: Long?): BusinessNotFoundException {
-        logger.error("Wallet not found with id: {} ", walletId)
-        throw ResponseStatusException(HttpStatus.NOT_FOUND, "Wallet not found with id $walletId")
+        val methodName = object{}.javaClass.enclosingMethod.name
+        logger.error("[$methodName] - Wallet not found with id: {} ", walletId)
+        throw ResponseStatusException(HttpStatus.NOT_FOUND, "Wallet not found")
     }
 
 }
