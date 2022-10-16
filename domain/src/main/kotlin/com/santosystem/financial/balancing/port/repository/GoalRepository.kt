@@ -20,4 +20,6 @@ interface GoalRepository {
     @Throws(InfraUnexpectedException::class)
     fun delete(goalId: Long)
 
+    fun existsById(goalId: Long): Boolean
+
 }

@@ -34,6 +34,7 @@ class GoalServiceImpl(private val repository: GoalRepository) : GoalService {
     }
 
     override fun save(goal: Goal): Goal {
+        verifyWalletIdIsNull(goal.walletId)
         return repository.save(goal)
     }
 
@@ -53,11 +54,23 @@ class GoalServiceImpl(private val repository: GoalRepository) : GoalService {
         repository.delete(goalId ?: 0)
     }
 
+    override fun existsById(goalId: Long?): Boolean {
+        return repository.existsById(goalId ?: 0)
+    }
+
     @Throws(BusinessException::class)
-    private fun verifyIdIsNull(id: Long?) {
-        if (Objects.isNull(id) || id == 0L) {
+    private fun verifyIdIsNull(goalId: Long?) {
+        if (Objects.isNull(goalId) || goalId == 0L) {
             logger.error("Goal ID required.")
             BusinessError.required("Goal ID")
+        }
+    }
+
+    @Throws(BusinessException::class)
+    private fun verifyWalletIdIsNull(walletId: Long?) {
+        if (Objects.isNull(walletId) || walletId == 0L) {
+            logger.error("Wallet ID required.")
+            BusinessError.required("Wallet ID")
         }
     }
 

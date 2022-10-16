@@ -8,7 +8,7 @@ interface AssetService {
 
     fun findAll(): List<Asset>
 
-    fun findAllByGoal(goalId: Long): List<Asset>
+//    fun findAllByGoal(goalId: Long): List<Asset>
 
     @Throws(BusinessNotFoundException::class, BusinessException::class)
     fun findById(assetId: Long?): Asset

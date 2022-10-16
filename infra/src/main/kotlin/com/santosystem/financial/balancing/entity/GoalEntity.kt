@@ -1,12 +1,16 @@
 package com.santosystem.financial.balancing.entity
 
 import com.santosystem.financial.balancing.entity.AssetEntity.Companion.toEntity
-import com.santosystem.financial.balancing.entity.AssetEntity.Companion.toModelList
+import com.santosystem.financial.balancing.entity.AssetEntity.Companion.toModel
 import com.santosystem.financial.balancing.model.Goal
+import org.springframework.data.annotation.CreatedDate
+import org.springframework.data.annotation.LastModifiedDate
+import org.springframework.data.jpa.domain.support.AuditingEntityListener
 import java.math.BigDecimal
 import java.time.ZonedDateTime
 import javax.persistence.Column
 import javax.persistence.Entity
+import javax.persistence.EntityListeners
 import javax.persistence.FetchType
 import javax.persistence.GeneratedValue
 import javax.persistence.GenerationType
@@ -17,6 +21,7 @@ import javax.persistence.PrePersist
 import javax.persistence.PreUpdate
 import javax.persistence.Table
 
+@EntityListeners(AuditingEntityListener::class)
 @Entity
 @Table(name = "goals")
 class GoalEntity(
@@ -35,8 +40,14 @@ class GoalEntity(
     @OneToMany(fetch = FetchType.EAGER)
     val assetEntities: List<AssetEntity>? = emptyList(),
 
+    @Column(name = "wallet_id", updatable = false)
+    val walletId: Long? = null,
+
+    @CreatedDate
+    @Column(updatable = false)
     var createdAt: ZonedDateTime? = null,
 
+    @LastModifiedDate
     var updatedAt: ZonedDateTime? = null
 
 ) {
@@ -49,22 +60,15 @@ class GoalEntity(
                 goalPercent = goalPercent,
                 currentPercent = currentPercent ?: BigDecimal.ZERO,
                 assetEntities = assets?.map { it.toEntity() },
-                createdAt,
-                updatedAt
+                walletId = walletId,
+                createdAt = createdAt,
+                updatedAt = updatedAt
             )
         }
 
-        fun List<GoalEntity>.toModelList(): List<Goal> {
+        fun List<GoalEntity>.toModel(): List<Goal> {
             return map {
-                Goal(
-                    id = it.id,
-                    name = it.name,
-                    goalPercent = it.goalPercent,
-                    currentPercent = it.currentPercent,
-                    assets = it.assetEntities?.toModelList(),
-                    it.createdAt,
-                    it.updatedAt
-                )
+                it.toModel()
             }
         }
     }
@@ -75,9 +79,10 @@ class GoalEntity(
             name = name,
             goalPercent = goalPercent,
             currentPercent = currentPercent,
-            assets = assetEntities?.toModelList(),
-            createdAt,
-            updatedAt
+            assets = assetEntities?.toModel(),
+            walletId = walletId,
+            createdAt = createdAt,
+            updatedAt = updatedAt
         )
     }
 

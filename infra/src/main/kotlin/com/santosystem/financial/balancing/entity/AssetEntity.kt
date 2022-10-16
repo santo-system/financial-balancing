@@ -2,10 +2,14 @@ package com.santosystem.financial.balancing.entity
 
 import com.santosystem.financial.balancing.model.Asset
 import com.santosystem.financial.balancing.model.enums.AssetType
+import org.springframework.data.annotation.CreatedDate
+import org.springframework.data.annotation.LastModifiedDate
+import org.springframework.data.jpa.domain.support.AuditingEntityListener
 import java.math.BigDecimal
 import java.time.ZonedDateTime
 import javax.persistence.Column
 import javax.persistence.Entity
+import javax.persistence.EntityListeners
 import javax.persistence.EnumType
 import javax.persistence.Enumerated
 import javax.persistence.GeneratedValue
@@ -16,6 +20,7 @@ import javax.persistence.PreUpdate
 import javax.persistence.Table
 import javax.validation.constraints.NotBlank
 
+@EntityListeners(AuditingEntityListener::class)
 @Entity
 @Table(name = "assets")
 data class AssetEntity(
@@ -46,8 +51,11 @@ data class AssetEntity(
 
     val quantity: Int,
 
+    @CreatedDate
+    @Column(updatable = false)
     var createdAt: ZonedDateTime? = null,
 
+    @LastModifiedDate
     var updatedAt: ZonedDateTime? = null
 
 ) {
@@ -69,7 +77,7 @@ data class AssetEntity(
             )
         }
 
-        fun List<AssetEntity>.toModelList(): List<Asset> {
+        fun List<AssetEntity>.toModel(): List<Asset> {
             return map {
                 Asset(
                     id = it.id,

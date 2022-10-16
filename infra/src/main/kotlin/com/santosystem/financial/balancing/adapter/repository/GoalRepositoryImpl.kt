@@ -3,7 +3,7 @@ package com.santosystem.financial.balancing.adapter.repository
 import com.santosystem.financial.balancing.adapter.repository.jpa.GoalJpaRepository
 import com.santosystem.financial.balancing.entity.GoalEntity
 import com.santosystem.financial.balancing.entity.GoalEntity.Companion.toEntity
-import com.santosystem.financial.balancing.entity.GoalEntity.Companion.toModelList
+import com.santosystem.financial.balancing.entity.GoalEntity.Companion.toModel
 import com.santosystem.financial.balancing.exception.InfraUnexpectedException
 import com.santosystem.financial.balancing.model.Goal
 import com.santosystem.financial.balancing.port.repository.GoalRepository
@@ -22,7 +22,7 @@ class GoalRepositoryImpl(private val repository: GoalJpaRepository) : GoalReposi
     override fun findAll(): List<Goal> {
         runCatching {
             val entityList: List<GoalEntity> = repository.findAll()
-            return entityList.toModelList()
+            return entityList.toModel()
         }.getOrElse {
             logger.error("Goal unexpected error in findAll method. Original message: {}", it.message)
             throw InfraUnexpectedException("Goal unexpected error in findAll method")
@@ -32,7 +32,7 @@ class GoalRepositoryImpl(private val repository: GoalJpaRepository) : GoalReposi
     override fun findAllByWallet(walletId: Long): List<Goal> {
         runCatching {
             val entityList: List<GoalEntity> = repository.findAllByWalletId(walletId)
-            return entityList.toModelList()
+            return entityList.toModel()
         }.getOrElse {
             logger.error("Goal unexpected error in findAllByWallet method. Original message: {}", it.message)
             throw InfraUnexpectedException("Goal unexpected error in findAllByWallet method")
@@ -72,6 +72,10 @@ class GoalRepositoryImpl(private val repository: GoalJpaRepository) : GoalReposi
             logger.error("Goal unexpected error in delete method. Original message: {}", it.message)
             throw InfraUnexpectedException("Goal unexpected error in delete method")
         }
+    }
+
+    override fun existsById(goalId: Long): Boolean {
+        return repository.existsById(goalId)
     }
 
 }

@@ -1,6 +1,8 @@
 package com.santosystem.financial.balancing.config
 
+import com.santosystem.financial.balancing.exception.InfraUnexpectedException
 import org.flywaydb.core.Flyway
+import org.slf4j.LoggerFactory
 import org.springframework.boot.context.properties.ConfigurationProperties
 import org.springframework.boot.jdbc.DataSourceBuilder
 import org.springframework.context.annotation.Bean
@@ -16,6 +18,8 @@ private const val LOCATION_DATA = "db/migration/data"
 @Configuration
 class FlywayConfig {
 
+    private val logger = LoggerFactory.getLogger(FlywayConfig::class.java)
+
     @Primary
     @Bean
     @ConfigurationProperties("spring.datasource")
@@ -26,11 +30,16 @@ class FlywayConfig {
     @DependsOn("getDataSource")
     @Bean(initMethod = "migrate")
     fun startMigrate() {
-        Flyway.configure()
-            .baselineOnMigrate(true)
-            .dataSource(getDataSource())
-            .locations(LOCATION_STRUCTURE, LOCATION_DATA)
-            .load()
-            .migrate()
+        runCatching {
+            Flyway.configure()
+                .baselineOnMigrate(true)
+                .dataSource(getDataSource())
+                .locations(LOCATION_STRUCTURE, LOCATION_DATA)
+                .load()
+                .migrate()
+        }.onFailure {
+            logger.error("Failed to init Flyway. Original message: {}", it.message)
+            throw InfraUnexpectedException("Failed to init Flyway")
+        }
     }
 }

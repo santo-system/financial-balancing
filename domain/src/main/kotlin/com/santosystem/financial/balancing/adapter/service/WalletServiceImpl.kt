@@ -48,6 +48,10 @@ class WalletServiceImpl(private val repository: WalletRepository) : WalletServic
         repository.delete(walletId ?: 0)
     }
 
+    override fun existsById(goalId: Long?): Boolean {
+        return repository.existsById(goalId ?: 0)
+    }
+
     @Throws(BusinessException::class)
     private fun verifyWalletIdIsNull(walletId: Long?) {
         if (Objects.isNull(walletId) || walletId == 0L) {

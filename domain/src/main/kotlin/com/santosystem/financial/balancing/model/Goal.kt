@@ -9,6 +9,7 @@ data class Goal(
     val goalPercent: BigDecimal,
     val currentPercent: BigDecimal? = BigDecimal.ZERO,
     val assets: List<Asset>? = emptyList(),
+    val walletId: Long? = null,
     val createdAt: ZonedDateTime? = null,
     val updatedAt: ZonedDateTime? = null
 )

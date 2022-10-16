@@ -64,4 +64,8 @@ class WalletRepositoryImpl(private val repository: WalletJpaRepository) : Wallet
         }
     }
 
+    override fun existsById(goalId: Long): Boolean {
+        return repository.existsById(goalId)
+    }
+
 }

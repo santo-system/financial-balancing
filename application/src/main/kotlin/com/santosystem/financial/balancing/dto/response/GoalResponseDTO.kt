@@ -5,6 +5,7 @@ import java.math.BigDecimal
 
 data class GoalResponseDTO(
     val id: Long?,
+    val walletId: Long?,
     val name: String,
     val goalPercent: BigDecimal,
     val currentPercent: BigDecimal? = BigDecimal.ZERO,
@@ -13,10 +14,17 @@ data class GoalResponseDTO(
         fun Goal.toResponseDTO(): GoalResponseDTO {
             return GoalResponseDTO(
                 id = id,
+                walletId = walletId,
                 name = name,
                 goalPercent = goalPercent,
-                currentPercent = currentPercent,
+                currentPercent = currentPercent ?: BigDecimal.ZERO,
             )
+        }
+
+        fun List<Goal>.toResponseDTO(): List<GoalResponseDTO> {
+            return map {
+                it.toResponseDTO()
+            }
         }
     }
 }

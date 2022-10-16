@@ -30,11 +30,9 @@ class AssetController() {
 
         val asset = service.save(request.toDomain())
 
-        val response = asset.toResponseDTO()
+        logger.info("Asset created: {} ", asset)
 
-        logger.info("Asset created: {} ", response)
-
-        return ResponseEntity.ok(response)
+        return ResponseEntity.ok(asset.toResponseDTO())
     }
 
 }

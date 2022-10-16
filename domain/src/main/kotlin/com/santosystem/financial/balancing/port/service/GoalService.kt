@@ -21,4 +21,6 @@ interface GoalService {
 
     fun delete(goalId: Long?)
 
+    fun existsById(goalId: Long?): Boolean
+
 }

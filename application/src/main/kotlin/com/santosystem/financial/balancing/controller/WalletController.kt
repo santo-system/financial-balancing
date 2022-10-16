@@ -26,7 +26,7 @@ class WalletController() {
     fun createWallet(
         @Valid @RequestBody request: WalletRequestDTO
     ): ResponseEntity<WalletResponseDTO> {
-        logger.info("Init to create the wallet: {} ", request)
+        logger.info("Starting to create the wallet: {} ", request)
 
         val wallet = service.save(request.toDomain())
 

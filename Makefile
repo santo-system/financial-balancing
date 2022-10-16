@@ -17,7 +17,7 @@ setup:
 	@chmod a+x .\gradlew
 
 ## BUILD AND REFRESH DEPENDENCIES
-build-refresh: clean
+build-r: clean
 	@echo "#make build-refresh started"
 	@.\gradlew build --refresh-dependencies
 
@@ -37,7 +37,6 @@ build: clean
 
 verify: clean
 	@echo "#make verify started"
-	@.\gradlew ktlintFormat
 	@.\gradlew check
 	@.\gradlew test
 

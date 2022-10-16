@@ -8,8 +8,8 @@ interface AssetRepository {
     @Throws(InfraUnexpectedException::class)
     fun findAll(): List<Asset>
 
-    @Throws(InfraUnexpectedException::class)
-    fun findAllByGoal(goalId: Long): List<Asset>
+//    @Throws(InfraUnexpectedException::class)
+//    fun findAllByGoal(goalId: Long): List<Asset>
 
     @Throws(InfraUnexpectedException::class)
     fun findById(assetId: Long): Asset?

@@ -6,6 +6,6 @@ import org.springframework.stereotype.Repository
 
 @Repository
 interface AssetJpaRepository : JpaRepository<AssetEntity, Long> {
-    fun findAllByGoalId(goalId: Long): List<AssetEntity>
+//    fun findAllByGoalId(goalId: Long): List<AssetEntity>
     fun findByTicker(ticker: String): AssetEntity?
 }

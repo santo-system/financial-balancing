@@ -15,10 +15,12 @@ data class GoalRequestDTO(
     @Positive
     private val goalPercent: BigDecimal,
 ) {
-    fun toDomain(): Goal {
+    fun toDomain(goalId: Long? = null, walletId: Long? = null): Goal {
         return Goal(
+            id = goalId,
             name = name,
-            goalPercent = goalPercent
+            goalPercent = goalPercent,
+            walletId = walletId
         )
     }
 }

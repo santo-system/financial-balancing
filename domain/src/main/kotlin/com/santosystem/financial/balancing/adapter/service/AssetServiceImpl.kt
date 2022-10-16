@@ -17,10 +17,10 @@ class AssetServiceImpl(private val repository: AssetRepository) : AssetService {
         return repository.findAll()
     }
 
-    override fun findAllByGoal(goalId: Long): List<Asset> {
-        verifyIdIsNull(goalId)
-        return repository.findAllByGoal(goalId)
-    }
+//    override fun findAllByGoal(goalId: Long): List<Asset> {
+//        verifyIdIsNull(goalId)
+//        return repository.findAllByGoal(goalId)
+//    }
 
     @Throws(BusinessNotFoundException::class, BusinessException::class)
     override fun findById(assetId: Long?): Asset {

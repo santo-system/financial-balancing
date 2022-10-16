@@ -18,4 +18,6 @@ interface WalletService {
 
     fun delete(walletId: Long?)
 
+    fun existsById(goalId: Long?): Boolean
+
 }

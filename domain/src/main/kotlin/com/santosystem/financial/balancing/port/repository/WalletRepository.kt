@@ -17,4 +17,6 @@ interface WalletRepository {
     @Throws(InfraUnexpectedException::class)
     fun delete(walletId: Long)
 
+    fun existsById(goalId: Long): Boolean
+
 }

@@ -3,7 +3,7 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 val logbackVersion: String by project
 
 plugins {
-    kotlin("jvm") version "1.7.10" apply false
+    kotlin("jvm") version "1.7.10"
     java
 }
 

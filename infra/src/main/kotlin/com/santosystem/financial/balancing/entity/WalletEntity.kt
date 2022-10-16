@@ -1,11 +1,15 @@
 package com.santosystem.financial.balancing.entity
 
 import com.santosystem.financial.balancing.entity.GoalEntity.Companion.toEntity
-import com.santosystem.financial.balancing.entity.GoalEntity.Companion.toModelList
+import com.santosystem.financial.balancing.entity.GoalEntity.Companion.toModel
 import com.santosystem.financial.balancing.model.Wallet
+import org.springframework.data.annotation.CreatedDate
+import org.springframework.data.annotation.LastModifiedDate
+import org.springframework.data.jpa.domain.support.AuditingEntityListener
 import java.time.ZonedDateTime
 import javax.persistence.Column
 import javax.persistence.Entity
+import javax.persistence.EntityListeners
 import javax.persistence.FetchType
 import javax.persistence.GeneratedValue
 import javax.persistence.GenerationType
@@ -17,6 +21,7 @@ import javax.persistence.PreUpdate
 import javax.persistence.Table
 import javax.validation.constraints.NotBlank
 
+@EntityListeners(AuditingEntityListener::class)
 @Entity
 @Table(name = "wallets")
 data class WalletEntity(
@@ -37,8 +42,11 @@ data class WalletEntity(
     @OneToMany(fetch = FetchType.EAGER)
     val goalEntities: List<GoalEntity>? = emptyList(),
 
+    @CreatedDate
+    @Column(updatable = false)
     var createdAt: ZonedDateTime? = null,
 
+    @LastModifiedDate
     var updatedAt: ZonedDateTime? = null
 
 ) {
@@ -63,7 +71,7 @@ data class WalletEntity(
                     name = it.name,
                     description = it.description,
                     main = it.main,
-                    goals = it.goalEntities?.toModelList(),
+                    goals = it.goalEntities?.toModel(),
                     it.createdAt,
                     it.updatedAt
                 )
@@ -77,7 +85,7 @@ data class WalletEntity(
             name = name,
             description = description,
             main = main,
-            goals = goalEntities?.toModelList(),
+            goals = goalEntities?.toModel(),
             createdAt,
             updatedAt
         )

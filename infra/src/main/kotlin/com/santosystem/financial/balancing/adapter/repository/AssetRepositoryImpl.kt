@@ -3,7 +3,7 @@ package com.santosystem.financial.balancing.adapter.repository
 import com.santosystem.financial.balancing.adapter.repository.jpa.AssetJpaRepository
 import com.santosystem.financial.balancing.entity.AssetEntity
 import com.santosystem.financial.balancing.entity.AssetEntity.Companion.toEntity
-import com.santosystem.financial.balancing.entity.AssetEntity.Companion.toModelList
+import com.santosystem.financial.balancing.entity.AssetEntity.Companion.toModel
 import com.santosystem.financial.balancing.exception.InfraUnexpectedException
 import com.santosystem.financial.balancing.model.Asset
 import com.santosystem.financial.balancing.port.repository.AssetRepository
@@ -22,22 +22,22 @@ class AssetRepositoryImpl(private val repository: AssetJpaRepository) : AssetRep
     override fun findAll(): List<Asset> {
         runCatching {
             val entityList: List<AssetEntity> = repository.findAll()
-            return entityList.toModelList()
+            return entityList.toModel()
         }.getOrElse {
             logger.error("Asset unexpected error in findAll method. Original message: {}", it.message)
             throw InfraUnexpectedException("Asset unexpected error in findAll method")
         }
     }
 
-    override fun findAllByGoal(goalId: Long): List<Asset> {
-        runCatching {
-            val entityList: List<AssetEntity> = repository.findAllByGoalId(goalId)
-            return entityList.toModelList()
-        }.getOrElse {
-            logger.error("Asset unexpected error in findAll method. Original message: {}", it.message)
-            throw InfraUnexpectedException("Asset unexpected error in findAll method")
-        }
-    }
+//    override fun findAllByGoal(goalId: Long): List<Asset> {
+//        runCatching {
+//            val entityList: List<AssetEntity> = repository.findAllByGoalId(goalId)
+//            return entityList.toModelList()
+//        }.getOrElse {
+//            logger.error("Asset unexpected error in findAll method. Original message: {}", it.message)
+//            throw InfraUnexpectedException("Asset unexpected error in findAll method")
+//        }
+//    }
 
     @Throws(InfraUnexpectedException::class)
     @Transactional(readOnly = true)
