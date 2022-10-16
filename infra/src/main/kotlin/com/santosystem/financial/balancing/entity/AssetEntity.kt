@@ -77,21 +77,15 @@ data class AssetEntity(
             )
         }
 
+        fun List<Asset>.toEntity(): List<AssetEntity> {
+            return map {
+                it.toEntity()
+            }
+        }
+
         fun List<AssetEntity>.toModel(): List<Asset> {
             return map {
-                Asset(
-                    id = it.id,
-                    ticker = it.ticker,
-                    name = it.name,
-                    segment = it.segment,
-                    sector = it.sector,
-                    subSector = it.subSector,
-                    assetType = it.assetType,
-                    averagePrice = it.averagePrice,
-                    quantity = it.quantity,
-                    it.createdAt,
-                    it.updatedAt
-                )
+                it.toModel()
             }
         }
     }

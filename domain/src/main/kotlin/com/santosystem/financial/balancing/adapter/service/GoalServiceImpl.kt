@@ -17,44 +17,33 @@ class GoalServiceImpl(private val repository: GoalRepository) : GoalService {
         return repository.findAll()
     }
 
-    override fun findAllByWallet(walletId: Long?): List<Goal> {
-        verifyIdIsNull(walletId)
+    override fun findAllByWallet(walletId: Long): List<Goal> {
         return repository.findAllByWallet(walletId ?: 0)
     }
 
-    @Throws(BusinessNotFoundException::class, BusinessException::class)
-    override fun findById(goalId: Long?): Goal {
-        verifyIdIsNull(goalId)
-
-        return when (val goalFound = repository.findById(goalId ?: 0)) {
+    @Throws(BusinessNotFoundException::class)
+    override fun findById(goalId: Long): Goal {
+        return when (val goalFound = repository.findById(goalId)) {
             null -> throw businessNotFoundException(goalId)
-
             else -> goalFound
         }
     }
 
     override fun save(goal: Goal): Goal {
-        verifyWalletIdIsNull(goal.walletId)
         return repository.save(goal)
     }
 
-    @Throws(BusinessNotFoundException::class, BusinessException::class)
     override fun update(goal: Goal): Goal {
-        verifyIdIsNull(goal.id)
-
-        return when (repository.findById(goal.id ?: 0)) {
-            null -> throw businessNotFoundException(goal.id)
-
-            else -> repository.save(goal)
-        }
+        return repository.save(goal)
     }
 
-    override fun delete(goalId: Long?) {
-        verifyIdIsNull(goalId)
+    override fun delete(goalId: Long) {
         repository.delete(goalId ?: 0)
     }
 
+    @Throws(BusinessException::class)
     override fun existsById(goalId: Long?): Boolean {
+        verifyIdIsNull(goalId)
         return repository.existsById(goalId ?: 0)
     }
 
@@ -66,17 +55,10 @@ class GoalServiceImpl(private val repository: GoalRepository) : GoalService {
         }
     }
 
-    @Throws(BusinessException::class)
-    private fun verifyWalletIdIsNull(walletId: Long?) {
-        if (Objects.isNull(walletId) || walletId == 0L) {
-            logger.error("Wallet ID required.")
-            BusinessError.required("Wallet ID")
-        }
-    }
-
+    @Throws(BusinessNotFoundException::class)
     private fun businessNotFoundException(goalId: Long?): BusinessNotFoundException {
-        logger.error("Goal not found with goalId: {} ", goalId)
-        throw BusinessNotFoundException("Goal not found.")
+        logger.error("Goal not found with id: {} ", goalId)
+        throw BusinessNotFoundException("Goal not found with id $goalId")
     }
 
 }

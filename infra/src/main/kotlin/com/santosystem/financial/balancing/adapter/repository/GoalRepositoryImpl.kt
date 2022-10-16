@@ -1,7 +1,6 @@
 package com.santosystem.financial.balancing.adapter.repository
 
 import com.santosystem.financial.balancing.adapter.repository.jpa.GoalJpaRepository
-import com.santosystem.financial.balancing.entity.GoalEntity
 import com.santosystem.financial.balancing.entity.GoalEntity.Companion.toEntity
 import com.santosystem.financial.balancing.entity.GoalEntity.Companion.toModel
 import com.santosystem.financial.balancing.exception.InfraUnexpectedException
@@ -21,8 +20,7 @@ class GoalRepositoryImpl(private val repository: GoalJpaRepository) : GoalReposi
     @Transactional(readOnly = true)
     override fun findAll(): List<Goal> {
         runCatching {
-            val entityList: List<GoalEntity> = repository.findAll()
-            return entityList.toModel()
+            return repository.findAll().toModel()
         }.getOrElse {
             logger.error("Goal unexpected error in findAll method. Original message: {}", it.message)
             throw InfraUnexpectedException("Goal unexpected error in findAll method")
@@ -31,8 +29,7 @@ class GoalRepositoryImpl(private val repository: GoalJpaRepository) : GoalReposi
 
     override fun findAllByWallet(walletId: Long): List<Goal> {
         runCatching {
-            val entityList: List<GoalEntity> = repository.findAllByWalletId(walletId)
-            return entityList.toModel()
+            return repository.findAllByWalletId(walletId).toModel()
         }.getOrElse {
             logger.error("Goal unexpected error in findAllByWallet method. Original message: {}", it.message)
             throw InfraUnexpectedException("Goal unexpected error in findAllByWallet method")
@@ -43,8 +40,7 @@ class GoalRepositoryImpl(private val repository: GoalJpaRepository) : GoalReposi
     @Transactional(readOnly = true)
     override fun findById(goalId: Long): Goal? {
         runCatching {
-            val entity: GoalEntity? = repository.findByIdOrNull(goalId)
-            return entity?.toModel()
+            return repository.findByIdOrNull(goalId)?.toModel()
         }.getOrElse {
             logger.error("Goal unexpected error in findById method. Original message: {}", it.message)
             throw InfraUnexpectedException("Goal unexpected error in findById method")
@@ -55,8 +51,7 @@ class GoalRepositoryImpl(private val repository: GoalJpaRepository) : GoalReposi
     @Transactional
     override fun save(goal: Goal): Goal {
         runCatching {
-            val entity: GoalEntity = repository.save(goal.toEntity())
-            return entity.toModel()
+            return repository.save(goal.toEntity()).toModel()
         }.getOrElse {
             logger.error("Goal unexpected error in save method. Original message: {}", it.message)
             throw InfraUnexpectedException("Goal unexpected error in save method")
@@ -74,8 +69,14 @@ class GoalRepositoryImpl(private val repository: GoalJpaRepository) : GoalReposi
         }
     }
 
+    @Throws(InfraUnexpectedException::class)
     override fun existsById(goalId: Long): Boolean {
-        return repository.existsById(goalId)
+        runCatching {
+            return repository.existsById(goalId)
+        }.getOrElse {
+            logger.error("Goal unexpected error in existsById method. Original message: {}", it.message)
+            throw InfraUnexpectedException("Goal unexpected error in existsById method")
+        }
     }
 
 }

@@ -8,19 +8,18 @@ interface GoalService {
 
     fun findAll(): List<Goal>
 
-    @Throws(BusinessNotFoundException::class, BusinessException::class)
-    fun findAllByWallet(walletId: Long?): List<Goal>
+    fun findAllByWallet(walletId: Long): List<Goal>
 
-    @Throws(BusinessNotFoundException::class, BusinessException::class)
-    fun findById(goalId: Long?): Goal
+    @Throws(BusinessNotFoundException::class)
+    fun findById(goalId: Long): Goal
 
     fun save(goal: Goal): Goal
 
-    @Throws(BusinessNotFoundException::class, BusinessException::class)
     fun update(goal: Goal): Goal
 
-    fun delete(goalId: Long?)
+    fun delete(goalId: Long)
 
+    @Throws(BusinessException::class)
     fun existsById(goalId: Long?): Boolean
 
 }

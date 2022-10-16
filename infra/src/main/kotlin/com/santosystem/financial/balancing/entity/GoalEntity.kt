@@ -59,11 +59,17 @@ class GoalEntity(
                 name = name,
                 goalPercent = goalPercent,
                 currentPercent = currentPercent ?: BigDecimal.ZERO,
-                assetEntities = assets?.map { it.toEntity() },
+                assetEntities = assets?.toEntity(),
                 walletId = walletId,
                 createdAt = createdAt,
                 updatedAt = updatedAt
             )
+        }
+
+        fun List<Goal>.toEntity(): List<GoalEntity> {
+            return map {
+                it.toEntity()
+            }
         }
 
         fun List<GoalEntity>.toModel(): List<Goal> {

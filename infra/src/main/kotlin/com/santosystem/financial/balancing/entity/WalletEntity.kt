@@ -58,7 +58,7 @@ data class WalletEntity(
                 name = name,
                 description = description,
                 main = main,
-                goalEntities = goals?.map { it.toEntity() },
+                goalEntities = goals?.toEntity(),
                 createdAt,
                 updatedAt
             )

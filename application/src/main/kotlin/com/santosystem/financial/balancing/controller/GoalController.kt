@@ -3,6 +3,7 @@ package com.santosystem.financial.balancing.controller
 import com.santosystem.financial.balancing.dto.request.GoalRequestDTO
 import com.santosystem.financial.balancing.dto.response.GoalResponseDTO
 import com.santosystem.financial.balancing.dto.response.GoalResponseDTO.Companion.toResponseDTO
+import com.santosystem.financial.balancing.exception.BusinessNotFoundException
 import com.santosystem.financial.balancing.port.service.GoalService
 import com.santosystem.financial.balancing.port.service.WalletService
 import org.slf4j.LoggerFactory
@@ -48,7 +49,7 @@ class GoalController(
             return ResponseEntity.status(HttpStatus.CREATED).body(createdGoal.toResponseDTO())
         }
 
-        throw ResponseStatusException(HttpStatus.NOT_FOUND, "Wallet not found with id $walletId")
+        throw walletNotFoundException(walletId)
     }
 
     @PutMapping("{goalId}")
@@ -68,7 +69,7 @@ class GoalController(
             return ResponseEntity.ok(updatedGoal.toResponseDTO())
         }
 
-        throw ResponseStatusException(HttpStatus.NOT_FOUND, "Goal not found with id $goalId")
+        throw goalNotFoundException(goalId)
     }
 
     @GetMapping()
@@ -96,7 +97,26 @@ class GoalController(
             return ResponseEntity.ok(foundGoal.toResponseDTO())
         }
 
-        throw ResponseStatusException(HttpStatus.NOT_FOUND, "Goal not found with id $goalId")
+        throw goalNotFoundException(goalId)
+    }
+
+    @GetMapping()
+    fun findAllGoalsByWallet(
+        @RequestParam(name = "walletId", required = true) walletId: Long
+    ): ResponseEntity<List<GoalResponseDTO>> {
+        logger.info("Starting to find all goals with the walletId: {}", walletId)
+
+        walletId.takeIf {
+            serviceWallet.existsById(it)
+        }?.also {
+            val allGoals = serviceGoal.findAllByWallet(walletId)
+
+            logger.info("All goals found: {} ", allGoals)
+
+            return ResponseEntity.ok(allGoals.toResponseDTO())
+        }
+
+        throw walletNotFoundException(walletId)
     }
 
     @DeleteMapping("{goalId}")
@@ -113,7 +133,19 @@ class GoalController(
             return ResponseEntity.ok().build()
         }
 
-        return ResponseEntity.notFound().build()
+        throw goalNotFoundException(goalId)
+    }
+
+    @Throws(ResponseStatusException::class)
+    private fun goalNotFoundException(goalId: Long?): BusinessNotFoundException {
+        logger.error("Goal not found with id: {} ", goalId)
+        throw ResponseStatusException(HttpStatus.NOT_FOUND, "Goal not found with id $goalId")
+    }
+
+    @Throws(ResponseStatusException::class)
+    private fun walletNotFoundException(walletId: Long?): BusinessNotFoundException {
+        logger.error("Wallet not found with id: {} ", walletId)
+        throw ResponseStatusException(HttpStatus.NOT_FOUND, "Wallet not found with id $walletId")
     }
 
 }
