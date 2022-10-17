@@ -9,38 +9,38 @@ import com.santosystem.financial.balancing.port.service.WalletService
 import org.slf4j.LoggerFactory
 import java.util.Objects
 
-class WalletServiceImpl(private val repository: WalletRepository) : WalletService {
+class WalletServiceImpl(private val repositoryWallet: WalletRepository) : WalletService {
 
     private val logger = LoggerFactory.getLogger(this::class.java)
 
     override fun findAll(): List<Wallet> {
-        return repository.findAll()
+        return repositoryWallet.findAll()
     }
 
     @Throws(BusinessNotFoundException::class)
     override fun findById(walletId: Long): Wallet {
-        return when (val foundWallet = repository.findById(walletId)) {
+        return when (val foundWallet = repositoryWallet.findById(walletId)) {
             null -> throw businessNotFoundException(walletId)
             else -> foundWallet
         }
     }
 
     override fun save(wallet: Wallet): Wallet {
-        return repository.save(wallet)
+        return repositoryWallet.save(wallet)
     }
 
     override fun update(wallet: Wallet): Wallet {
-        return repository.save(wallet)
+        return repositoryWallet.save(wallet)
     }
 
     override fun delete(walletId: Long) {
-        repository.delete(walletId)
+        repositoryWallet.delete(walletId)
     }
 
     @Throws(BusinessException::class)
     override fun existsById(walletId: Long?): Boolean {
         verifyIdIsNull(walletId)
-        return repository.existsById(walletId ?: 0)
+        return repositoryWallet.existsById(walletId ?: 0)
     }
 
     @Throws(BusinessException::class)
