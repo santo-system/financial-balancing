@@ -2,6 +2,9 @@ package com.santosystem.financial.balancing.entity
 
 import com.santosystem.financial.balancing.model.Asset
 import com.santosystem.financial.balancing.model.enums.AssetType
+import com.santosystem.financial.balancing.model.enums.Sector
+import com.santosystem.financial.balancing.model.enums.Segment
+import com.santosystem.financial.balancing.model.enums.SubSector
 import org.springframework.data.annotation.CreatedDate
 import org.springframework.data.annotation.LastModifiedDate
 import org.springframework.data.jpa.domain.support.AuditingEntityListener
@@ -19,6 +22,7 @@ import javax.persistence.PrePersist
 import javax.persistence.PreUpdate
 import javax.persistence.Table
 import javax.validation.constraints.NotBlank
+import javax.validation.constraints.Positive
 
 @EntityListeners(AuditingEntityListener::class)
 @Entity
@@ -32,33 +36,50 @@ data class AssetEntity(
     @Column(length = 100)
     val ticker: String,
 
-    @Column(length = 255)
-    val name: String?,
+    @Column(name = "short_name", length = 255)
+    val shortName: String,
 
-    @Column(length = 255)
-    val segment: String?,
-
-    @Column(length = 255)
-    val sector: String?,
-
-    @Column(length = 255)
-    val subSector: String?,
+    @Column(name = "long_name", length = 255)
+    val longName: String,
 
     @Enumerated(EnumType.STRING)
+    @Column(length = 255)
+    val segment: Segment?,
+
+    @Enumerated(EnumType.STRING)
+    @Column(length = 255)
+    val sector: Sector?,
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "sub_sector",length = 255)
+    val subSector: SubSector?,
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "asset_type")
     val assetType: AssetType?,
 
+    @Positive
+    @Column(name = "average_price")
     val averagePrice: BigDecimal,
 
+    @Column(name = "market_price_current")
+    val marketPriceCurrent: BigDecimal?,
+
+    @Column(name = "market_price_previous_close")
+    val marketPricePreviousClose: BigDecimal?,
+
+    @Positive
     val quantity: Int,
 
     @Column(name = "goal_id", updatable = false)
     val goalId: Long? = null,
 
     @CreatedDate
-    @Column(updatable = false)
+    @Column(name = "created_at", updatable = false)
     var createdAt: ZonedDateTime? = null,
 
     @LastModifiedDate
+    @Column(name = "updated_at")
     var updatedAt: ZonedDateTime? = null
 
 ) {
@@ -68,12 +89,15 @@ data class AssetEntity(
             return AssetEntity(
                 id = id,
                 ticker = ticker,
-                name = name,
+                shortName = shortName.orEmpty(),
+                longName = longName.orEmpty(),
                 segment = segment,
                 sector = sector,
                 subSector = subSector,
                 assetType = assetType,
                 averagePrice = averagePrice,
+                marketPriceCurrent = marketPriceCurrent,
+                marketPricePreviousClose = marketPricePreviousClose,
                 quantity = quantity,
                 goalId = goalId,
                 createdAt = createdAt,
@@ -98,12 +122,15 @@ data class AssetEntity(
         return Asset(
             id = id,
             ticker = ticker,
-            name = name,
+            shortName = shortName,
+            longName = longName,
             segment = segment,
             sector = sector,
             subSector = subSector,
             assetType = assetType,
             averagePrice = averagePrice,
+            marketPriceCurrent = marketPriceCurrent,
+            marketPricePreviousClose = marketPricePreviousClose,
             quantity = quantity,
             goalId = goalId,
             createdAt = createdAt,

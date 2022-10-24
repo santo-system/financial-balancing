@@ -2,12 +2,14 @@ package com.santosystem.financial.balancing.config
 
 import com.santosystem.financial.balancing.adapter.service.AssetServiceImpl
 import com.santosystem.financial.balancing.adapter.service.GoalServiceImpl
+import com.santosystem.financial.balancing.adapter.service.InvestmentServiceImpl
 import com.santosystem.financial.balancing.adapter.service.WalletServiceImpl
 import com.santosystem.financial.balancing.port.repository.AssetRepository
 import com.santosystem.financial.balancing.port.repository.GoalRepository
 import com.santosystem.financial.balancing.port.repository.WalletRepository
 import com.santosystem.financial.balancing.port.service.AssetService
 import com.santosystem.financial.balancing.port.service.GoalService
+import com.santosystem.financial.balancing.port.service.InvestmentService
 import com.santosystem.financial.balancing.port.service.WalletService
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
@@ -28,6 +30,11 @@ class BeanConfiguration {
     @Bean
     fun assetService(repository: AssetRepository): AssetService {
         return AssetServiceImpl(repository)
+    }
+
+    @Bean
+    fun investmentService(): InvestmentService {
+        return InvestmentServiceImpl()
     }
 
 }

@@ -1,4 +1,12 @@
 spring:
+  application:
+    name: "${APP_NAME:financial-balancing}"
+  main:
+    banner-mode: off
+  cloud:
+    loadbalancer:
+      ribbon:
+        enabled: false
   output:
     ansi:
       enabled: ALWAYS
@@ -21,7 +29,7 @@ spring:
         dialect: org.hibernate.dialect.PostgreSQL9Dialect
 
 server:
-  port: ${HTTP_PORT:8081}
+  port: ${HTTP_PORT:8080}
   servlet:
     context-path: /${APP_NAME:financial-balancing}
   error:
@@ -44,3 +52,9 @@ logbook:
     - /api/admin/**
     - /admin/**
   format.style: json
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info

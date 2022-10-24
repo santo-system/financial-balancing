@@ -2,17 +2,23 @@ package com.santosystem.financial.balancing.dto.response
 
 import com.santosystem.financial.balancing.model.Asset
 import com.santosystem.financial.balancing.model.enums.AssetType
+import com.santosystem.financial.balancing.model.enums.Sector
+import com.santosystem.financial.balancing.model.enums.Segment
+import com.santosystem.financial.balancing.model.enums.SubSector
 import java.math.BigDecimal
 
 data class AssetResponseDTO(
     val id: Long?,
     val ticker: String,
-    val name: String? = null,
-    val segment: String? = null,
-    val sector: String? = null,
-    val subSector: String? = null,
+    val shortName: String,
+    val longName: String,
+    val segment: Segment? = null,
+    val sector: Sector? = null,
+    val subSector: SubSector? = null,
     val assetType: AssetType? = null,
     val averagePrice: BigDecimal,
+    val marketPriceCurrent: BigDecimal? = null,
+    val marketPricePreviousClose: BigDecimal? = null,
     val quantity: Int,
     val goalId: Long?,
 ) {
@@ -21,12 +27,15 @@ data class AssetResponseDTO(
             return AssetResponseDTO(
                 id = id,
                 ticker = ticker,
-                name = name.orEmpty(),
+                shortName = shortName.orEmpty(),
+                longName = longName.orEmpty(),
                 segment = segment,
                 sector = sector,
                 subSector = subSector,
                 assetType = assetType,
                 averagePrice = averagePrice,
+                marketPriceCurrent = marketPriceCurrent,
+                marketPricePreviousClose = marketPricePreviousClose,
                 quantity = quantity,
                 goalId = goalId
             )

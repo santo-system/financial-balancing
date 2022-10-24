@@ -1,10 +1,19 @@
 package com.santosystem.financial.balancing.controller
 
+import com.fasterxml.jackson.core.type.TypeReference
+import com.santosystem.financial.balancing.client.YahooFinanceClient
 import com.santosystem.financial.balancing.dto.request.AssetRequestDTO
 import com.santosystem.financial.balancing.dto.response.AssetResponseDTO
 import com.santosystem.financial.balancing.dto.response.AssetResponseDTO.Companion.toResponseDTO
+import com.santosystem.financial.balancing.model.enums.AssetType
+import com.santosystem.financial.balancing.model.enums.Sector
+import com.santosystem.financial.balancing.model.enums.Segment
+import com.santosystem.financial.balancing.model.enums.SubSector
 import com.santosystem.financial.balancing.port.service.AssetService
 import com.santosystem.financial.balancing.port.service.GoalService
+import com.santosystem.financial.balancing.util.reader.CompanyUtil
+import com.santosystem.financial.balancing.util.reader.ReaderUtil.Companion.fromJson
+import com.santosystem.financial.balancing.util.reader.ReaderUtil.Companion.readJsonFromPath
 import org.slf4j.LoggerFactory
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
@@ -21,12 +30,14 @@ import org.springframework.web.bind.annotation.RestController
 import org.springframework.web.server.ResponseStatusException
 import javax.validation.Valid
 
+
 @RestController
 @RequestMapping("/assets")
 @ResponseBody
 class AssetController(
     private val serviceAsset: AssetService,
-    private val serviceGoal: GoalService
+    private val serviceGoal: GoalService,
+    private val clientYahooFinance: YahooFinanceClient
 ) {
 
     private val logger = LoggerFactory.getLogger(this::class.java)
@@ -42,7 +53,46 @@ class AssetController(
         goalId.takeIf {
             serviceGoal.existsById(it)
         }?.also {
-            val createdAsset = serviceAsset.save(request.toDomain(goalId = goalId))
+            val getQuote = clientYahooFinance.getQuote(request.ticker).quoteResponse.result.firstOrNull()
+            val getQuoteSummary = clientYahooFinance.getQuoteSummary(request.ticker).quoteSummary.result.firstOrNull()
+
+            val assetType = getQuoteSummary?.assetProfile?.sector.takeIf {
+                it.equals("Real Estate", true)
+            }?.let {
+                AssetType.REAL_ESTATE_FUND
+            } ?: AssetType.ACTION
+
+            val json = "api-cotacao-b3-companies.json".readJsonFromPath()
+            val type = object : TypeReference<List<CompanyUtil>>() {}
+            val companies = json.fromJson(type)
+
+            val company = companies.firstOrNull {
+                it.tickersToList(it.tickers).contains(request.ticker)
+            }
+
+            val shortName = assetType.takeIf {
+                it == AssetType.REAL_ESTATE_FUND
+            }?.let {
+                getQuote?.shortName
+            }?: company?.name
+
+            val sector: Sector = Sector.getSector(company?.sector.orEmpty())
+            val subSector: SubSector = SubSector.getSubSector(company?.subSector.orEmpty())
+            val segment: Segment = Segment.getSegment(company?.segment.orEmpty())
+
+            val asset = request.toDomain(
+                goalId = goalId,
+                segment = segment,
+                sector = sector,
+                subSector = subSector,
+                marketPriceCurrent = getQuote?.regularMarketPrice,
+                marketPricePreviousClose = getQuote?.regularMarketPreviousClose,
+                shortName = shortName,
+                longName = getQuote?.longName,
+                assetType = assetType
+            )
+
+            val createdAsset = serviceAsset.save(asset)
 
             logger.info("[$methodName] - Asset created: {} ", createdAsset)
 
