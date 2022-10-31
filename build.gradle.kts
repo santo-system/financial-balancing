@@ -18,7 +18,7 @@ java.targetCompatibility = JavaVersion.VERSION_11
 
 allprojects {
     group = "com.santosystem"
-    version = "1.0-SNAPSHOT"
+    version = "1.0.0"
 
     apply(plugin = "java")
 

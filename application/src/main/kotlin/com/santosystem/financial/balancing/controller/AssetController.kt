@@ -14,6 +14,7 @@ import com.santosystem.financial.balancing.port.service.GoalService
 import com.santosystem.financial.balancing.util.reader.CompanyUtil
 import com.santosystem.financial.balancing.util.reader.ReaderUtil.Companion.fromJson
 import com.santosystem.financial.balancing.util.reader.ReaderUtil.Companion.readJsonFromPath
+import io.swagger.v3.oas.annotations.Operation
 import org.slf4j.LoggerFactory
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
@@ -30,7 +31,6 @@ import org.springframework.web.bind.annotation.RestController
 import org.springframework.web.server.ResponseStatusException
 import javax.validation.Valid
 
-
 @RestController
 @RequestMapping("/assets")
 @ResponseBody
@@ -42,6 +42,10 @@ class AssetController(
 
     private val logger = LoggerFactory.getLogger(this::class.java)
 
+    @Operation(
+        summary = "Deve criar um ativo",
+        description = "Cria um novo ativo"
+    )
     @PostMapping
     fun createAsset(
         @RequestParam(name = "goalId", required = true) goalId: Long,
@@ -102,6 +106,10 @@ class AssetController(
         throw goalNotFoundException(goalId = goalId)
     }
 
+    @Operation(
+        summary = "Deve alterar um ativo",
+        description = "Altera um ativo pelo seu ID"
+    )
     @PutMapping("/{assetId}")
     fun updateAsset(
         @PathVariable("assetId") assetId: Long,
@@ -123,6 +131,10 @@ class AssetController(
         throw assetNotFoundException(assetId = assetId)
     }
 
+    @Operation(
+        summary = "Deve retornar todos os ativos",
+        description = "Retorna uma lista com todos os ativos"
+    )
     @GetMapping()
     fun findAllAssets(): ResponseEntity<List<AssetResponseDTO>> {
         val methodName = object {}.javaClass.enclosingMethod.name
@@ -135,6 +147,10 @@ class AssetController(
         return ResponseEntity.ok(allAssets.toResponseDTO())
     }
 
+    @Operation(
+        summary = "Deve retornar um ativo",
+        description = "Retorna um ativo pelo seu ID"
+    )
     @GetMapping("/{assetId}")
     fun findAnAsset(@PathVariable("assetId") assetId: Long): ResponseEntity<AssetResponseDTO> {
         val methodName = object {}.javaClass.enclosingMethod.name
@@ -153,6 +169,10 @@ class AssetController(
         throw assetNotFoundException(assetId = assetId)
     }
 
+    @Operation(
+        summary = "Deve retornar um ativo",
+        description = "Retorna um ativo pelo seu ticker e pelo ID de uma meta específica"
+    )
     @GetMapping("/{ticker}/{goalId}")
     fun findAnAssetByTicker(
         @PathVariable("ticker") ticker: String,
@@ -174,6 +194,10 @@ class AssetController(
         throw goalNotFoundException(goalId = goalId)
     }
 
+    @Operation(
+        summary = "Deve deletar um ativo",
+        description = "Deleta um ativo pelo seu ID"
+    )
     @DeleteMapping("/{assetId}")
     fun deleteAsset(@PathVariable("assetId") assetId: Long): ResponseEntity<String> {
         val methodName = object {}.javaClass.enclosingMethod.name

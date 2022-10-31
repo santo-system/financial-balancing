@@ -39,10 +39,9 @@ dependencies {
     implementation("org.springframework.cloud:spring-cloud-starter-openfeign")
 
     // OpenAPI 3
-    implementation("org.springdoc:springdoc-openapi-data-rest:1.6.11")
-    implementation("org.springdoc:springdoc-openapi-ui:1.6.11")
-    implementation("org.springdoc:springdoc-openapi-kotlin:1.6.11")
-    implementation("org.springdoc:springdoc-openapi-core:1.1.49")
+    implementation("org.springdoc:springdoc-openapi-data-rest:1.6.12")
+    implementation("org.springdoc:springdoc-openapi-ui:1.6.12")
+    implementation("org.springdoc:springdoc-openapi-kotlin:1.6.12")
 
     // Logger
     implementation("org.zalando:logbook-spring-boot-starter:2.14.0")

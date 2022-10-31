@@ -7,6 +7,7 @@ import com.santosystem.financial.balancing.dto.response.WalletResponseDTO
 import com.santosystem.financial.balancing.dto.response.WalletResponseDTO.Companion.toResponseDTO
 import com.santosystem.financial.balancing.port.service.GoalService
 import com.santosystem.financial.balancing.port.service.WalletService
+import io.swagger.v3.oas.annotations.Operation
 import org.slf4j.LoggerFactory
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
@@ -32,11 +33,15 @@ class WalletController(
 
     private val logger = LoggerFactory.getLogger(this::class.java)
 
+    @Operation(
+        summary = "Deve criar uma carteira",
+        description = "Cria uma nova carteira"
+    )
     @PostMapping
     fun createWallet(
         @Valid @RequestBody request: WalletRequestDTO
     ): ResponseEntity<WalletResponseDTO> {
-        val methodName = object{}.javaClass.enclosingMethod.name
+        val methodName = object {}.javaClass.enclosingMethod.name
         logger.info("[$methodName] - Starting to create a wallet: {} ", request)
 
         val createdWallet = serviceWallet.save(request.toDomain())
@@ -46,12 +51,16 @@ class WalletController(
         return ResponseEntity.status(HttpStatus.CREATED).body(createdWallet.toResponseDTO())
     }
 
+    @Operation(
+        summary = "Deve alterar uma carteira",
+        description = "Altera uma carteira pelo seu ID"
+    )
     @PutMapping("/{walletId}")
     fun updateWallet(
         @PathVariable("walletId") walletId: Long,
         @Valid @RequestBody request: WalletRequestDTO
     ): ResponseEntity<WalletResponseDTO> {
-        val methodName = object{}.javaClass.enclosingMethod.name
+        val methodName = object {}.javaClass.enclosingMethod.name
         logger.info("[$methodName] - Starting to update a wallet: {} with the walletId: {}", request, walletId)
 
         walletId.takeIf {
@@ -67,9 +76,13 @@ class WalletController(
         throw walletNotFoundException(walletId = walletId)
     }
 
+    @Operation(
+        summary = "Deve retornar todas as carteiras",
+        description = "Retorna uma lista com todas as carteiras"
+    )
     @GetMapping()
     fun findAllWallets(): ResponseEntity<List<WalletResponseDTO>> {
-        val methodName = object{}.javaClass.enclosingMethod.name
+        val methodName = object {}.javaClass.enclosingMethod.name
         logger.info("[$methodName] - Starting to find all wallets")
 
         val allWallets = serviceWallet.findAll()
@@ -79,6 +92,10 @@ class WalletController(
         return ResponseEntity.ok(allWallets.toResponseDTO())
     }
 
+    @Operation(
+        summary = "Deve retornar todas as metas de uma carteira",
+        description = "Retorna uma lista com todas as metas de uma carteira específica"
+    )
     @GetMapping("/{walletId}/goals")
     fun findAllGoals(@PathVariable("walletId") walletId: Long): ResponseEntity<List<GoalResponseDTO>> {
         val methodName = object {}.javaClass.enclosingMethod.name
@@ -97,9 +114,13 @@ class WalletController(
         throw walletNotFoundException(walletId = walletId)
     }
 
+    @Operation(
+        summary = "Deve retornar uma carteira",
+        description = "Retorna uma carteira pelo seu ID"
+    )
     @GetMapping("/{walletId}")
     fun findAWallet(@PathVariable("walletId") walletId: Long): ResponseEntity<WalletResponseDTO> {
-        val methodName = object{}.javaClass.enclosingMethod.name
+        val methodName = object {}.javaClass.enclosingMethod.name
         logger.info("[$methodName] - Starting to find a wallet with the walletId: {}", walletId)
 
         walletId.takeIf {
@@ -115,9 +136,13 @@ class WalletController(
         throw walletNotFoundException(walletId = walletId)
     }
 
+    @Operation(
+        summary = "Deve deletar uma carteira",
+        description = "Deleta uma carteira pelo seu ID"
+    )
     @DeleteMapping("/{walletId}")
     fun deleteWallet(@PathVariable("walletId") walletId: Long): ResponseEntity<String> {
-        val methodName = object{}.javaClass.enclosingMethod.name
+        val methodName = object {}.javaClass.enclosingMethod.name
         logger.info("[$methodName] - Starting to delete a wallet with the walletId: {}", walletId)
 
         walletId.takeIf {
@@ -135,7 +160,7 @@ class WalletController(
 
     @Throws(ResponseStatusException::class)
     private fun walletNotFoundException(walletId: Long?): ResponseStatusException {
-        val methodName = object{}.javaClass.enclosingMethod.name
+        val methodName = object {}.javaClass.enclosingMethod.name
         logger.error("[$methodName] - Wallet not found with id: {} ", walletId)
         throw ResponseStatusException(HttpStatus.NOT_FOUND, "Wallet not found")
     }

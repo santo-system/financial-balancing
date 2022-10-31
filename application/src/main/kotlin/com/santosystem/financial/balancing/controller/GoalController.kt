@@ -8,6 +8,7 @@ import com.santosystem.financial.balancing.dto.response.GoalResponseDTO.Companio
 import com.santosystem.financial.balancing.port.service.AssetService
 import com.santosystem.financial.balancing.port.service.GoalService
 import com.santosystem.financial.balancing.port.service.WalletService
+import io.swagger.v3.oas.annotations.Operation
 import org.slf4j.LoggerFactory
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
@@ -35,6 +36,10 @@ class GoalController(
 
     private val logger = LoggerFactory.getLogger(this::class.java)
 
+    @Operation(
+        summary = "Deve criar uma meta",
+        description = "Cria uma nova meta"
+    )
     @PostMapping()
     fun createGoal(
         @RequestParam(name = "walletId", required = true) walletId: Long,
@@ -56,6 +61,10 @@ class GoalController(
         throw walletNotFoundException(walletId = walletId)
     }
 
+    @Operation(
+        summary = "Deve alterar uma meta",
+        description = "Altera uma meta pelo seu ID"
+    )
     @PutMapping("/{goalId}")
     fun updateGoal(
         @PathVariable("goalId") goalId: Long,
@@ -77,6 +86,10 @@ class GoalController(
         throw goalNotFoundException(goalId = goalId)
     }
 
+    @Operation(
+        summary = "Deve retornar todas as metas",
+        description = "Retorna uma lista com todas as metas"
+    )
     @GetMapping()
     fun findAllGoals(): ResponseEntity<List<GoalResponseDTO>> {
         val methodName = object {}.javaClass.enclosingMethod.name
@@ -89,6 +102,10 @@ class GoalController(
         return ResponseEntity.ok(allGoals.toResponseDTO())
     }
 
+    @Operation(
+        summary = "Deve retornar todas os ativos de uma meta",
+        description = "Retorna uma lista com todos os ativos de uma meta específica"
+    )
     @GetMapping("/{goalId}/assets")
     fun findAllAssets(@PathVariable("goalId") goalId: Long): ResponseEntity<List<AssetResponseDTO>> {
         val methodName = object {}.javaClass.enclosingMethod.name
@@ -107,6 +124,10 @@ class GoalController(
         throw goalNotFoundException(goalId = goalId)
     }
 
+    @Operation(
+        summary = "Deve retornar uma meta",
+        description = "Retorna uma meta pelo seu ID"
+    )
     @GetMapping("/{goalId}")
     fun findAGoal(@PathVariable("goalId") goalId: Long): ResponseEntity<GoalResponseDTO> {
         val methodName = object {}.javaClass.enclosingMethod.name
@@ -125,6 +146,10 @@ class GoalController(
         throw goalNotFoundException(goalId = goalId)
     }
 
+    @Operation(
+        summary = "Deve deletar uma meta",
+        description = "Deleta uma meta pelo seu ID"
+    )
     @DeleteMapping("/{goalId}")
     fun deleteGoal(@PathVariable("goalId") goalId: Long): ResponseEntity<String> {
         val methodName = object {}.javaClass.enclosingMethod.name

@@ -10,8 +10,8 @@ import org.springframework.cloud.openfeign.EnableFeignClients
 @OpenAPIDefinition(
     info = Info(
         title = "Financial Balancing API",
-        description = "1.0.0",
-        version = "Service responsible for the financial balancing",
+        description = "Serviço responsável pelo balanceamento financeiro",
+        version = "1.0.0",
     )
 )
 @EnableFeignClients
